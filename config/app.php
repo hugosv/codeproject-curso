@@ -143,6 +143,10 @@ return [
         CodeProject\Providers\AppServiceProvider::class,
         CodeProject\Providers\EventServiceProvider::class,
         CodeProject\Providers\RouteServiceProvider::class,
+        CodeProject\Providers\CodeProjectRepositoryProvider::class,
+
+        // Repositório
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
 
     ],
 
