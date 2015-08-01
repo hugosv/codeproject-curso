@@ -3,32 +3,32 @@
 namespace CodeProject\Services;
 
 
-use CodeProject\Repositories\ClientRepository;
-use CodeProject\Validators\ClientValidator;
+use CodeProject\Repositories\ProjectNoteRepository;
+use CodeProject\Validators\ProjectNoteValidator;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
- * Class ClientService
+ * Class ProjectNoteService
  * @package CodeProject\Services
  */
-class ClientService
+class ProjectNoteService
 {
 
     /**
-     * @var ClientRepository
+     * @var ProjectNoteRepository
      */
     protected $repository;
 
     /**
-     * @var ClientValidator
+     * @var ProjectNoteValidator
      */
     protected $validator;
 
     /**
-     * @param ClientRepository $repository
-     * @param ClientValidator $validator
+     * @param ProjectNoteRepository $repository
+     * @param ProjectNoteValidator $validator
      */
-    public function __construct(ClientRepository $repository, ClientValidator $validator)
+    public function __construct(ProjectNoteRepository $repository, ProjectNoteValidator $validator)
     {
         $this->repository = $repository;
         $this->validator = $validator;
