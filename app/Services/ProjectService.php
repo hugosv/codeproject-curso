@@ -35,6 +35,27 @@ class ProjectService
     }
 
     /**
+     * @param $id
+     * @return array|mixed
+     */
+    public function find($id)
+    {
+        try {
+
+            return $this->repository->find($id);
+
+        } catch ( ModelNotFoundException $e )
+        {
+
+            return [
+                'error'   => true,
+                'message' => 'Project does not exist'
+            ];
+
+        }
+    }
+
+    /**
      * @param array $data
      * @return mixed
      */
@@ -76,7 +97,43 @@ class ProjectService
                 'message' => $e->getMessageBag()
             ];
 
+        } catch ( \Exception $e ) {
+
+            return [
+                'error' => true,
+                'message' => 'The project does not exist',
+            ];
         }
 
+    }
+
+    public function delete($id)
+    {
+        try
+        {
+            return $this->repository->find($id)->delete();
+
+        } catch (  \Exception $e ) {
+
+            switch (get_class($e)) {
+
+                case 'Illuminate\Database\Eloquent\ModelNotFoundException':
+                    $message = 'The project does not exist';
+                    break;
+
+                case 'Illuminate\Database\QueryException':
+                    $message = 'The project can not be deleted.';
+                    break;
+
+                default:
+                    $message = $e->getMessage();
+            }
+
+            return [
+                'error' => true,
+                'message' => $message,
+            ];
+
+        }
     }
 }

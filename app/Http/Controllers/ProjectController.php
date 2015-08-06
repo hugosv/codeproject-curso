@@ -100,9 +100,13 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        if( $this->repository->find($id)->delete() )
-        {
+        $retorno =  $this->service->delete($id);
+
+        if( $retorno === true ){
             return 'Deletado';
+        }
+        else {
+            return $retorno;
         }
     }
 }
