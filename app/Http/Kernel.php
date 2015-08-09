@@ -26,7 +26,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
-    protected $routeMiddleware = [
+    protected $routeMiddleware = array(
         'auth' => \CodeProject\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \CodeProject\Http\Middleware\RedirectIfAuthenticated::class,
@@ -34,6 +34,7 @@ class Kernel extends HttpKernel
         'oauth' => \LucaDegasperi\OAuth2Server\Middleware\OAuthMiddleware::class,
         'oauth-owner' => \LucaDegasperi\OAuth2Server\Middleware\OAuthOwnerMiddleware::class,
         'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
+        'CheckProjectOwner' => \CodeProject\Http\Middleware\CheckProjectOwner::class,
 
-    ];
+    );
 }
