@@ -41,6 +41,7 @@ class ClientService
      */
     public function find($id)
     {
+
         try {
 
             return $this->repository->find($id);
@@ -112,7 +113,7 @@ class ClientService
     {
         try
         {
-            return $this->repository->find($id)->delete();
+            return $this->repository->delete($id);
 
         } catch (  \Exception $e ) {
 
