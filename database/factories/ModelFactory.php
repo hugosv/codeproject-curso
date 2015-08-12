@@ -39,7 +39,7 @@ $factory->define(CodeProject\Entities\Project::class, function (Faker\Generator 
         'description' => $faker->sentence,
         'progress' => rand(1,100),
         'status' => rand(1,3),
-        'due_date' => $faker->dateTime,
+        'due_date' => $faker->dateTimeBetween($startDate = '+5 days', $endDate = '+2 years'),
     ];
 });
 
@@ -47,6 +47,23 @@ $factory->define(CodeProject\Entities\ProjectNote::class, function (Faker\Genera
     return [
         'project_id' => rand(1,10),
         'title' => $faker->sentence($nbWords = 4),
-        'note' => $faker->paragraph,
+        'note' => $faker->paragraph(),
+    ];
+});
+
+$factory->define(CodeProject\Entities\ProjectMember::class, function (Faker\Generator $faker) {
+    return [
+        'project_id' => $faker->numberBetween($min = 1, $max = 10),
+        'member_id' => $faker->numberBetween($min = 1, $max = 11),
+    ];
+});
+
+$factory->define(CodeProject\Entities\ProjectTask::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->sentence($nb = 3),
+        'project_id' => rand(1,10),
+        'start_date' => $faker->dateTimeBetween($startDate = '-2 years', $endDate = '-1 years'),
+        'due_date' => $faker->dateTimeBetween($startDate = '+5 days', $endDate = '+2 years'),
+        'status' => rand(1,3),
     ];
 });

@@ -18,4 +18,6 @@ Route::group(['middleware' => 'oauth'], function() {
 
     Route::resource('project.note', 'ProjectNoteController', ['except' => ['create', 'edit']]);
 
+    Route::resource('project.task', 'ProjectTaskController', ['except' => ['create', 'edit']]);
+
 });
