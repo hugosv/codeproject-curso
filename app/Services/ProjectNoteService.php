@@ -25,6 +25,36 @@ class ProjectNoteService
     protected $validator;
 
     /**
+     * @param $projectId
+     * @return mixed
+     */
+    public function all($projectId)
+    {
+        return $this->repository->findWhere( ['project_id' => $projectId] );
+    }
+
+    /**
+     * @param $projectId
+     * @param $noteId
+     * @return array|mixed
+     */
+    public function find($projectId, $noteId)
+    {
+        try {
+
+            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId]);
+
+        } catch ( \Exception $e )
+        {
+            return [
+                'error'   => true,
+                'message' => 'Project does not exist'
+            ];
+
+        }
+    }
+
+    /**
      * @param ProjectNoteRepository $repository
      * @param ProjectNoteValidator $validator
      */
@@ -49,7 +79,7 @@ class ProjectNoteService
 
             return [
                 'error' => true,
-                'message' => $e->getMessageBag()
+                'message' => $e->getMessageBag(),
             ];
 
         }

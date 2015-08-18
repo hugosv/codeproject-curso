@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
 
-class ProjectNoteController extends Controller
+class ProjectTaskController extends Controller
 {
 
     /**

@@ -34,6 +34,11 @@ class ProjectService
         $this->validator = $validator;
     }
 
+    public function all()
+    {
+        return $this->repository->with(['client', 'owner'])->all($columns = [ 'id', 'name', 'description', 'client_id', 'owner_id']);
+    }
+
     /**
      * @param $id
      * @return array|mixed
@@ -42,15 +47,18 @@ class ProjectService
     {
         try {
 
-            return $this->repository->find($id);
+            return $this->repository->with(['client', 'owner', 'notes'])->findWhere(['id' => $id]);
 
-        } catch ( ModelNotFoundException $e )
+        } catch ( \Exception $e )
         {
 
-            return [
-                'error'   => true,
-                'message' => 'Project does not exist'
-            ];
+            if(get_class($e) == 'Illuminate\Database\Eloquent\ModelNotFoundException' )
+            {
+                return [
+                    'error'   => true,
+                    'message' => 'Project does not exist' + $message ,
+                ];
+            }
 
         }
     }
@@ -107,6 +115,10 @@ class ProjectService
 
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
     public function delete($id)
     {
         try
@@ -136,4 +148,97 @@ class ProjectService
 
         }
     }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @return bool
+     */
+    public function isOwner($projectId, $userId)
+    {
+        if ( count( $this->repository->findWhere(['id' => $projectId, 'owner_id' => $userId]) ) )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $projectId
+     * @return array
+     */
+    public function getMembers($projectId)
+    {
+        if( count( $this->repository->findWhere(['id' => $projectId]) ) )
+        {
+            return $this->repository->find($projectId)->members->all();
+        }
+
+        return ['error' => 'Project does not exists'];
+    }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @return array
+     */
+    public function addMember($projectId, $userId)
+    {
+        try {
+
+            $this->repository->find($projectId)->members()->attach($userId);
+            return ['success' => true];
+
+        } catch (\Exception $e) {
+
+            return [
+                "error" => true,
+                "message" => $e->getMessage()
+            ];
+
+        }
+    }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @return array
+     */
+    public function removeMember($projectId, $userId)
+    {
+        try {
+
+            $this->repository->find($projectId)->members()->detach($userId);
+            return ['success' => true];
+
+        } catch (\Exception $e) {
+            return [
+                "error" => true,
+                "message" => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @return array
+     */
+    public function isMember($projectId, $userId)
+    {
+        try {
+
+            return $this->repository->find($projectId)->members()->find($userId) ? true : false;
+
+        } catch (\Exception $e) {
+
+            return [
+                "error" => true,
+                "message" => $e->getMessage()
+            ];
+
+        }
+    }
+
 }

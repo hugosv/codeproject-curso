@@ -38,7 +38,7 @@ class ProjectNoteController extends Controller
      */
     public function index( $id )
     {
-        return $this->repository->findWhere(['project_id' => $id]);
+        return $this->service->all($id);
     }
 
     /**
@@ -54,12 +54,14 @@ class ProjectNoteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request  $request
+     * @param $projectId
+     * @param  Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store($projectId, Request $request )
     {
-        return $this->service->create($request->all());
+
+        return $this->service->create($request->all() + ['project_id' => $projectId]);
     }
 
     /**
@@ -70,7 +72,7 @@ class ProjectNoteController extends Controller
      */
     public function show($id, $noteId)
     {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        return $this->service->find($id, $noteId);
     }
 
     /**
@@ -87,13 +89,14 @@ class ProjectNoteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param  Request $request
+     * @param $projectId
+     * @param $noteId
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $projectId, $noteId)
     {
-        return $this->service->update($request->all(), $id);
+        return $this->service->update($request->all() + ['project_id' => $projectId], $noteId);
     }
 
     /**
