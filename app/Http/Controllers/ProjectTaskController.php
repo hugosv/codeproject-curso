@@ -65,12 +65,13 @@ class ProjectTaskController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     * @param $taskId
      * @return Response
      */
-    public function show($id, $noteId)
+    public function show($id, $taskId)
     {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
+        return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
     }
 
     /**
@@ -87,24 +88,25 @@ class ProjectTaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  int  $id
+     * @param  Request $request
+     * @param $task
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $task)
     {
-        return $this->service->update($request->all(), $id);
+        return $this->service->update($request->all(), $task);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param $task
      * @return Response
+     * @internal param int $id
      */
-    public function destroy($id)
+    public function destroy( $task )
     {
-        if( $this->repository->find($id)->delete() )
+        if( $this->repository->delete($task) )
         {
             return 'Deletado';
         }

@@ -72,7 +72,6 @@ class ProjectController extends Controller
     public function show($id)
     {
 
-//        return $this->checkProjectPermission($id) ? 'é dono' : 'Nao é nada';
         if (!$this->checkProjectPermission($id))
         {
             return ['error' => 'Access Forbidden!'];
