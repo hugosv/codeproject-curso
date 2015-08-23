@@ -26,6 +26,6 @@ Route::group(['middleware' => 'oauth'], function() {
 
     Route::resource('project.members', 'ProjectMemberController', ['only' => ['index', 'store', 'show', 'destroy']]);
 
+    Route::post('project/{id}/file', 'ProjectFileController@store');
+
 });
-
-

@@ -5,6 +5,8 @@ namespace CodeProject\Services;
 
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Validators\ProjectValidator;
+use File;
+use Illuminate\Support\Facades\Storage;
 use Prettus\Validator\Exceptions\ValidatorException;
 
 /**
@@ -240,5 +242,15 @@ class ProjectService
 
         }
     }
+
+    public function createFile(array $data)
+    {
+        $project = $this->repository->skipPresenter()->find($data['project_id']);
+        $projectFile = $project->files()->create($data);
+
+        Storage::put($projectFile->project_id . '_' . $projectFile->id . "." . $data['extension'], File::get($data['file']));
+
+    }
+
 
 }
