@@ -174,10 +174,11 @@ class ProjectService
     {
         if( count( $this->repository->findWhere(['id' => $projectId]) ) )
         {
-            return $this->repository->find($projectId)->members->all();
+            return $this->repository->find($projectId)->members;
         }
 
         return ['error' => 'Project does not exists'];
+
     }
 
     /**
