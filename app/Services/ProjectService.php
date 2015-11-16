@@ -5,9 +5,11 @@ namespace CodeProject\Services;
 
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Validators\ProjectValidator;
-use File;
-use Illuminate\Support\Facades\Storage;
+
 use Prettus\Validator\Exceptions\ValidatorException;
+
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Contracts\Filesystem\Factory as Storage;
 
 /**
  * Class ProjectService
@@ -27,13 +29,27 @@ class ProjectService
     protected $validator;
 
     /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    /**
+     * @var Storage
+     */
+    private $storage;
+
+    /**
      * @param ProjectRepository $repository
      * @param ProjectValidator $validator
+     * @param Filesystem $filesystem
+     * @param Storage $storage
      */
-    public function __construct(ProjectRepository $repository, ProjectValidator $validator)
+    public function __construct(ProjectRepository $repository, ProjectValidator $validator, Filesystem $filesystem, Storage $storage)
     {
         $this->repository = $repository;
         $this->validator = $validator;
+        $this->filesystem = $filesystem;
+        $this->storage = $storage;
     }
 
     public function all()
@@ -158,12 +174,14 @@ class ProjectService
      */
     public function isOwner($projectId, $userId)
     {
-        if ( count( $this->repository->findWhere(['id' => $projectId, 'owner_id' => $userId]) ) )
+        if (count($this->repository->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId] ) ))
         {
             return true;
         }
 
         return false;
+
+
     }
 
     /**
@@ -249,7 +267,35 @@ class ProjectService
         $project = $this->repository->skipPresenter()->find($data['project_id']);
         $projectFile = $project->files()->create($data);
 
-        Storage::put($projectFile->project_id . '_' . $projectFile->id . "." . $data['extension'], File::get($data['file']));
+        $this->storage->put($projectFile->project_id . '_' . $projectFile->id . "." . $data['extension'], $this->filesystem->get($data['file']));
+
+    }
+
+    public function deleteFile($projectId, $fileId)
+    {
+        // Busca o arquivo
+        $file = $this->repository->skipPresenter()->find($projectId)->files->find($fileId);
+
+        // Caso não encontre, retorna erro
+        if($file == null)
+        {
+            return [
+                'error'   => true,
+                'message' => 'File not found!',
+            ];
+        }
+
+        // Pega o nome do arquivo e deleta do filesystem
+        $fileName = $file->project_id . '_' . $file->id . '.' . $file->extension;
+        $this->storage->delete($fileName);
+
+        // Deleta o arquivo do banco de dados
+        if( $file->delete() )
+        {
+            return [
+                'message' => 'File deleted success'
+            ];
+        }
 
     }
 

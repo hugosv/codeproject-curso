@@ -34,9 +34,9 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
     /**
      * @return mixed
      */
-//    public function presenter()
-//    {
-//        return projectPresenter::class;
-//    }
+    public function presenter()
+    {
+        return projectPresenter::class;
+    }
 
 }

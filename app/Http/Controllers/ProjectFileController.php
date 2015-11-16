@@ -2,14 +2,14 @@
 
 namespace CodeProject\Http\Controllers;
 
+use CodeProject\Entities\ProjectFile;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
-use File;
 use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
-use LucaDegasperi\OAuth2Server\Facades\Authorizer;
-use Storage;
+use Mockery\CountValidator\Exception;
+use Validator;
 
 class ProjectFileController extends Controller
 {
@@ -41,7 +41,7 @@ class ProjectFileController extends Controller
      */
     public function index()
     {
-        return $this->service->all();
+        //
     }
 
     /**
@@ -51,7 +51,7 @@ class ProjectFileController extends Controller
      */
     public function create()
     {
-
+        //
     }
 
     /**
@@ -62,19 +62,41 @@ class ProjectFileController extends Controller
      */
     public function store(Request $request)
     {
-        $file = $request->file('file');
-        $extension = $file->getClientOriginalExtension();
+        try {
+            $validator = Validator::make($request->all(), [
+                'file' => 'required'
+            ]);
 
-        $data = [
-            'file' => $file,
-            'extension' => $extension,
-            'name' => $request->name,
-            'project_id' => $request->project_id,
-            'description' => $request->description,
-        ];
+            if($validator->fails()) {
+                return [
+                    'error' => true,
+                    'message' => 'File missing'
+                ];
+            }
 
-        $this->service->createFile($data);
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
 
+            $data = [
+                'file' => $file,
+                'extension' => $extension,
+                'name' => $request->name,
+                'project_id' => $request->project_id,
+                'description' => $request->description,
+            ];
+
+            $this->service->createFile($data);
+
+            return [
+                'message' => 'File stored'
+            ];
+
+        } catch(Exception $e) {
+            return [
+                'error' => true,
+                'message' => 'Error'
+            ];
+        }
     }
 
     /**
@@ -85,13 +107,7 @@ class ProjectFileController extends Controller
      */
     public function show($id)
     {
-
-        if (!$this->checkProjectPermission($id))
-        {
-            return ['error' => 'Access Forbidden!'];
-        }
-
-        return $this->service->find($id);
+        //
     }
 
     /**
@@ -114,11 +130,7 @@ class ProjectFileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ( $this->checkProjectOwner($id) )
-        {
-            return ['error' => 'Access Forbidden!'];
-        }
-        return $this->service->update($request->all(), $id);
+        //
     }
 
     /**
@@ -127,22 +139,9 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, $fileId)
     {
-        if ( $this->checkProjectOwner($id) )
-        {
-
-            return ['error' => 'Access Forbidden!'];
-        }
-
-        $retorno =  $this->service->delete($id);
-
-        if( $retorno === true ){
-
-            return 'Deletado';
-        }
-
-        return $retorno;
+        return $this->service->deleteFile($id, $fileId);
     }
 
 }

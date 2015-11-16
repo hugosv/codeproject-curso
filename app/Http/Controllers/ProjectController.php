@@ -71,11 +71,10 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-
-//        if (!$this->checkProjectPermission($id))
-//        {
-//            return ['error' => 'Access Forbidden!'];
-//        }
+        if (!$this->checkProjectPermission($id))
+        {
+            return ['error' => 'Access Forbidden!'];
+        }
 
         return $this->service->find($id);
     }
@@ -100,11 +99,12 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-//        if ( $this->checkProjectOwner($id) )
-//        {
-//            return ['error' => 'Access Forbidden!'];
-//        }
+        if ( !$this->checkProjectOwner($id) )
+        {
+            return ['error' => 'Access Forbidden!'];
+        }
         return $this->service->update($request->all(), $id);
+
     }
 
     /**
@@ -115,13 +115,12 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-//        if ( $this->checkProjectOwner($id) )
-//        {
-//
-//            return ['error' => 'Access Forbidden!'];
-//        }
+        if ( !$this->checkProjectOwner($id) )
+        {
+            return ['error' => 'Access Forbidden!'];
+        }
 
-        $retorno =  $this->service->delete($id);
+        $retorno = $this->service->delete($id);
 
         if( $retorno === true ){
 
