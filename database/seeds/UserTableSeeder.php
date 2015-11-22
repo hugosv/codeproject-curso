@@ -12,7 +12,7 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(\CodeProject\Entities\User::class)->create([
+        factory(User::class)->create([
             'name' => 'Hugo Vieira',
             'email' => 'hugo@example.com',
             'password' => bcrypt('password'),

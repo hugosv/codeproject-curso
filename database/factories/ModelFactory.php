@@ -67,3 +67,11 @@ $factory->define(CodeProject\Entities\ProjectTask::class, function (Faker\Genera
         'status' => rand(1,3),
     ];
 });
+
+$factory->define(CodeProject\Entities\OAuthClient::class, function (Faker\Generator $faker) {
+    return [
+        'id' => $faker->word,
+        'secret' => $faker->word,
+        'name' => $faker->company,
+    ];
+});

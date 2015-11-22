@@ -54,7 +54,7 @@ class ProjectService
 
     public function all()
     {
-        return $this->repository->with(['client', 'owner'])->all($columns = [ 'id', 'name', 'description', 'client_id', 'owner_id']);
+        return $this->repository->with(['client', 'owner'])->all();
     }
 
     /**

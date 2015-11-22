@@ -14,6 +14,7 @@ class CreateTableProjectFiles extends Migration
     {
         Schema::create('project_files', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('project_id')->unsigned();
             $table->string('name');
             $table->text('description');
             $table->string('extension');
