@@ -24,8 +24,10 @@ config.vendor_path_js = [
     config.bower_path + '/angular-animate/angular-animate.min.js',
     config.bower_path + '/angular-messages/angular-messages.min.js',
     config.bower_path + '/angular-bootstrap/ui-bootstrap.min.js',
-    config.bower_path + '/angular-strap/dist/modules/navbar.min.js'
-
+    config.bower_path + '/angular-strap/dist/modules/navbar.min.js',
+    config.bower_path + '/angular-cookies/angular-cookies.min.js',
+    config.bower_path + '/query-string/query-string.js',
+    config.bower_path + '/angular-oauth2/dist/angular-oauth2.min.js'
 ];
 
 // Configuração dos CSS
@@ -35,6 +37,18 @@ config.vendor_path_css = [
     config.bower_path + '/bootstrap/dist/css/bootstrap.min.css',
     config.bower_path + '/bootstrap/dist/css/bootstrap-theme.min.css'
 ];
+
+// Configuração do HTML
+config.build_path_html = config.build_path + '/views';
+
+// Tarefa que copia o html para a pasta adequada
+gulp.task('copy-html', function () {
+    gulp.src([
+        config.assets_path + '/js/views/**/*.html'
+    ])
+        .pipe(gulp.dest(config.build_path_html))
+        .pipe(livereload());
+});
 
 // Precisamos pegar os nossos CSS e copiar para nossa pasta Build.
 gulp.task('copy-styles', function () {
@@ -67,8 +81,12 @@ gulp.task('copy-scripts', function () {
 // ele já vai buscar automaticamente.
 gulp.task('watch-dev', ['clear-build-folder'], function () {
     livereload.listen();
-    gulp.start('copy-styles', 'copy-scripts');
-    gulp.watch(config.assets_path + '/**', ['copy-styles', 'copy-scripts']);
+    gulp.start('copy-styles', 'copy-scripts', 'copy-html');
+    gulp.watch(config.assets_path + '/**', [
+        'copy-styles',
+        'copy-scripts',
+        'copy-html'
+    ]);
 });
 
 gulp.task('clear-build-folder', function () {
@@ -77,6 +95,9 @@ gulp.task('clear-build-folder', function () {
 
 // Tarefa padrão para chamar somente com o comando gulp
 gulp.task('default', ['clear-build-folder'], function () {
+
+    gulp.start('copy-html');
+
     elixir(function (mix) {
         mix.styles(
             config.vendor_path_css.concat([config.assets_path + '/css/**/*']),
