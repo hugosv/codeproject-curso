@@ -16,8 +16,10 @@ class ClientRepositoryEloquent extends BaseRepository implements ClientRepositor
 		return Client::class;
 	}
 
-	public function presenter()
-    {
-        return ClientPresenter::class;
-    }
+//	Desativando o Presenter para os CRUDS de Angular
+//	public function presenter()
+//    {
+//        return ClientPresenter::class;
+//    }
+
 }

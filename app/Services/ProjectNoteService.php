@@ -25,36 +25,6 @@ class ProjectNoteService
     protected $validator;
 
     /**
-     * @param $projectId
-     * @return mixed
-     */
-    public function all($projectId)
-    {
-        return $this->repository->findWhere( ['project_id' => $projectId] );
-    }
-
-    /**
-     * @param $projectId
-     * @param $noteId
-     * @return array|mixed
-     */
-    public function find($projectId, $noteId)
-    {
-        try {
-
-            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId]);
-
-        } catch ( \Exception $e )
-        {
-            return [
-                'error'   => true,
-                'message' => 'Project does not exist'
-            ];
-
-        }
-    }
-
-    /**
      * @param ProjectNoteRepository $repository
      * @param ProjectNoteValidator $validator
      */
@@ -87,6 +57,36 @@ class ProjectNoteService
     }
 
     /**
+     * @param $projectId
+     * @return mixed
+     */
+    public function all($projectId)
+    {
+        return $this->repository->findWhere( ['project_id' => $projectId] );
+    }
+
+    /**
+     * @param $projectId
+     * @param $noteId
+     * @return array|mixed
+     */
+    public function find($projectId, $noteId)
+    {
+        try {
+
+            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId])->first();
+
+        } catch ( \Exception $e )
+        {
+            return [
+                'error'   => true,
+                'message' => 'Project does not exist'
+            ];
+
+        }
+    }
+
+    /**
      * @param array $data
      * @param $id
      * @return mixed
@@ -107,6 +107,28 @@ class ProjectNoteService
             ];
 
         }
+
+    }
+
+    /**
+     * @param $projectId
+     * @param $noteId
+     */
+    public function delete($projectId, $noteId)
+    {
+        try {
+
+            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId])->first()->delete() ? 'Deletado' : 'Não foi possível deletar';
+
+        }
+        catch (\Exception $e)
+        {
+            return [
+                'error' => true,
+                'message' => 'An error ocurred on delete'
+            ];
+        }
+
 
     }
 }

@@ -56,7 +56,7 @@
                 @endif
             </ul>
         </div>
-    </dsrc=
+    </div>
 </nav>
 
 {{--@yield('content')--}}
@@ -77,10 +77,29 @@
     <script src="{{ asset('build/js/vendor/query-string.js') }}"></script>
     <script src="{{ asset('build/js/vendor/angular-oauth2.min.js') }}"></script>
 
-
     <script src="{{ asset('build/js/app.js') }}"></script>
+
+    <!-- CONTROLLERS CLIENT -->
     <script src="{{ asset('build/js/controllers/login.js') }}"></script>
     <script src="{{ asset('build/js/controllers/home.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/client/clientList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/client/clientDetails.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/client/clientNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/client/clientEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/client/clientRemove.js') }}"></script>
+
+    <!-- CONTROLLERS PROJECT NOTES -->
+    <script src="{{ asset('build/js/controllers/project_notes/projectNotesList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project_notes/projectNotesNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project_notes/projectNotesDetails.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project_notes/projectNotesEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project_notes/projectNotesRemove.js') }}"></script>
+
+
+    <!-- SERVICES -->
+    <script src="{{ asset('build/js/services/client.js') }}"></script>
+    <script src="{{ asset('build/js/services/projectNotes.js') }}"></script>
+
 
 @else
     <script src="{{ elixir('js/all.js') }}"></script>

@@ -44,7 +44,7 @@ config.build_path_html = config.build_path + '/views';
 // Tarefa que copia o html para a pasta adequada
 gulp.task('copy-html', function () {
     gulp.src([
-        config.assets_path + '/js/views/**/*.html'
+        config.assets_path + '/views/**/*.html'
     ])
         .pipe(gulp.dest(config.build_path_html))
         .pipe(livereload());

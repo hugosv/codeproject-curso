@@ -496,38 +496,103 @@ f+" > 4096 bytes)!");k.cookie=e}}c.module("ngCookies",["ng"]).provider("$cookies
  * Created by hugo on 9/24/16.
  */
 
-var app = angular.module('app', ['ngRoute', 'app.controllers']);
+var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers']);
 
-angular.module('app.controllers', []);
+angular.module('app.controllers', ['ngMessages', 'angular-oauth2']);
 
-app.config(function ($routeProvider) {
+app.provider('appConfig', function(){
+   var config = {
+       baseUrl: 'http://codeproject.app'
+   };
+
+   return {
+       config: config,
+       $get: function () {
+           return config;
+       }
+   };
+
+});
+
+app.config([
+    '$routeProvider', 'OAuthProvider', 'appConfigProvider',
+    function ($routeProvider, OAuthProvider, appConfigProvider) {
+
     $routeProvider
         .when('/login', {
             templateUrl: 'build/views/login.html',
             controller: 'LoginController'
-        })
+            })
 
         .when('/home', {
             templateUrl: 'build/views/home.html',
             controller: 'HomeController'
+          })
 
-   });
-});
+        .when('/clients', {
+            templateUrl: 'build/views/client/list.html',
+            controller: 'ClientListController'
+        });
+
+    OAuthProvider.configure({
+        baseUrl: appConfigProvider.config.baseUrl,
+        clientId: 'appid1',
+        clientSecret: 'secret', // optional
+        grantPath: 'oauth/access_token'
+    });
+
+}]);
+
+app.run(['$rootScope', '$window', 'OAuth', function($rootScope, $window, OAuth) {
+    $rootScope.$on('oauth:error', function(event, rejection) {
+        // Ignore `invalid_grant` error - should be catched on `LoginController`.
+        if ('invalid_grant' === rejection.data.error) {
+            return;
+        }
+
+        // Refresh token when a `invalid_token` error occurs.
+        if ('invalid_token' === rejection.data.error) {
+            return OAuth.getRefreshToken();
+        }
+
+        // Redirect to `/login` with the `error_reason`.
+        return $window.location.href = '/login?error_reason=' + rejection.data.error;
+    });
+}]);
 angular.module('app.controllers')
     .controller('HomeController', ['$scope', function ($scope) {
 
     }]);
 angular.module('app.controllers')
-    .controller('LoginController', ['$scope', function ($scope) {
+    .controller('LoginController', ['$scope', '$location', 'OAuth',  function ($scope, $location, OAuth) {
         $scope.user = {
             username: '',
             password: ''
         };
 
-        $scope.login = function() {
+        $scope.error = {
+            message: '',
+            error: false
+        };
 
+        $scope.login = function() {
+            if($scope.form.$valid) {
+                OAuth.getAccessToken($scope.user).then(function () {
+
+                    $location.path('home');
+
+                }, function (data) { //variavel data com o retorno do servidor
+
+                    $scope.error.error = true;
+                    // data.error_description = undefined;
+                    $scope.error.message = data.data.error_description;
+
+                });
+            }
         };
     }]);
+
+
 <h1>Você está logado</h1>
 <div class="container-fluid">
     <div class="row">
@@ -535,30 +600,39 @@ angular.module('app.controllers')
             <div class="panel panel-default">
                 <div class="panel-heading">Login</div>
                 <div class="panel-body">
-                    @if (count($errors) > 0)
-                    <div class="alert alert-danger">
-                        <strong>Whoops!</strong> There were some problems with your input.<br><br>
+
+                    <div class="alert alert-danger" ng-show="error.error">
+                        <strong>Whoops!</strong> Alguma coisa deu errado<br><br>
                         <ul>
-                            @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                            @endforeach
+                            <li>{{ error.message }}</li>
                         </ul>
                     </div>
-                    @endif
 
-                    <form class="form-horizontal" role="form" method="POST" ng-submit="login()">
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="login()">
 
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': !form.username.$valid && form.username.$touched}">
                         <label class="col-md-4 control-label">E-Mail Address</label>
                         <div class="col-md-6">
-                            <input type="text" class="form-control" name="username" ng-model="user.username">
+
+                            <input type="text" class="form-control" name="username" ng-model="user.username" required>
+
+                            <div ng-messages="form.username.$error" class="help-block" ng-show="form.username.$touched">
+                                <div ng-message="required">Obrigatório</div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" ng-class="{'has-error': !form.password.$valid && form.password.$touched}">
                         <label class="col-md-4 control-label">Password</label>
                         <div class="col-md-6">
-                            <input type="password" class="form-control" name="password" ng-model="user.password">
+
+                            <input type="password" class="form-control" name="password" ng-model="user.password" required>
+
+                            <div ng-messages="form.password.$error" class="help-block" ng-show="form.password.$touched">
+                                <div ng-message="required">Obrigatório</div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -573,14 +647,10 @@ angular.module('app.controllers')
         </div>
     </div>
 </div>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+angular.module('app.controllers')
+    .controller('ClientListController', ['$scope', function($scope) {
 
-</body>
-</html>
+        $scope.clients = [];
+
+    }]);
 //# sourceMappingURL=all.js.map

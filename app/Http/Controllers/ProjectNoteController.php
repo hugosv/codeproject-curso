@@ -18,7 +18,7 @@ class ProjectNoteController extends Controller
     /**
      * @var ProjectNoteService
      */
-    private $service;
+    private  $service;
 
     /**
      * @param ProjectNoteRepository $repository
@@ -105,11 +105,9 @@ class ProjectNoteController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($projectId, $noteId)
     {
-        if( $this->repository->find($id)->delete() )
-        {
-            return 'Deletado';
-        }
+        return $this->service->delete($projectId, $noteId);
+
     }
 }

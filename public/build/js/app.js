@@ -2,11 +2,30 @@
  * Created by hugo on 9/24/16.
  */
 
-var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers']);
+var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers', 'app.services']);
 
 angular.module('app.controllers', ['ngMessages', 'angular-oauth2']);
+angular.module('app.services', ['ngResource']);
 
-app.config(['$routeProvider', 'OAuthProvider', function ($routeProvider, OAuthProvider) {
+
+app.provider('appConfig', function(){
+   var config = {
+       baseUrl: 'http://codeproject.app'
+   };
+
+   return {
+       config: config,
+       $get: function () {
+           return config;
+       }
+   };
+
+});
+
+app.config([
+    '$routeProvider', 'OAuthProvider', 'OAuthTokenProvider', 'appConfigProvider',
+    function ($routeProvider, OAuthProvider, OAuthTokenProvider, appConfigProvider) {
+
     $routeProvider
         .when('/login', {
             templateUrl: 'build/views/login.html',
@@ -16,14 +35,65 @@ app.config(['$routeProvider', 'OAuthProvider', function ($routeProvider, OAuthPr
         .when('/home', {
             templateUrl: 'build/views/home.html',
             controller: 'HomeController'
-          });
+          })
+
+        // clients
+        .when('/clients', {
+            templateUrl: 'build/views/client/list.html',
+            controller: 'ClientListController'
+        })
+        .when('/clients/new', {
+            templateUrl: 'build/views/client/new.html',
+            controller: 'ClientNewController'
+        })
+        .when('/clients/:id', {
+            templateUrl: 'build/views/client/details.html',
+            controller: 'ClientDetailsController'
+        })
+         .when('/clients/:id/edit', {
+            templateUrl: 'build/views/client/edit.html',
+            controller: 'ClientEditController'
+        })
+        .when('/clients/:id/remove', {
+            templateUrl: 'build/views/client/remove.html',
+            controller: 'ClientRemoveController'
+        })
+
+        // project notes
+        .when('/project/:id/notes', {
+            templateUrl: 'build/views/projectNotes/list.html',
+            controller: 'ProjectNotesListController'
+        })
+        .when('/project/:id/notes/new', {
+            templateUrl: 'build/views/projectNotes/new.html',
+            controller: 'ProjectNotesNewController'
+        })
+        .when('/project/:id/notes/:idNote', {
+            templateUrl: 'build/views/projectNotes/details.html',
+            controller: 'ProjectNotesDetailsController'
+        })
+        .when('/project/:id/notes/:idNote/edit', {
+            templateUrl: 'build/views/projectNotes/edit.html',
+            controller: 'ProjectNotesEditController'
+        })
+        .when('/project/:id/notes/:idNote/remove', {
+            templateUrl: 'build/views/projectNotes/remove.html',
+            controller: 'ProjectNotesRemoveController'
+        });
 
     OAuthProvider.configure({
-        baseUrl: 'http://codeproject.app',
+        baseUrl: appConfigProvider.config.baseUrl,
         clientId: 'appid1',
         clientSecret: 'secret', // optional
         grantPath: 'oauth/access_token'
     });
+
+    OAuthTokenProvider.configure({
+        name: 'token',
+        options: {
+            secure: false
+        }
+    })
 
 }]);
 
