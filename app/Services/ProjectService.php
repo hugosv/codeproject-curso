@@ -52,9 +52,13 @@ class ProjectService
         $this->storage = $storage;
     }
 
-    public function all()
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function all($userId)
     {
-        return $this->repository->with(['client', 'owner'])->all();
+        return $this->repository->with(['client', 'owner'])->findWhere(['owner_id' => $userId]);
     }
 
     /**
@@ -65,7 +69,7 @@ class ProjectService
     {
         try {
 
-            return $this->repository->with(['client', 'owner', 'notes'])->findWhere(['id' => $id]);
+            return $this->repository->with(['client', 'owner', 'notes'])->find($id);
 
         } catch ( \Exception $e )
         {

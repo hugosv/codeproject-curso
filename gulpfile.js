@@ -38,8 +38,10 @@ config.vendor_path_css = [
     config.bower_path + '/bootstrap/dist/css/bootstrap-theme.min.css'
 ];
 
-// Configuração do HTML
+// Configuração do HTML, fonts e images
 config.build_path_html = config.build_path + '/views';
+config.build_path_font = config.build_path + '/fonts';
+config.build_path_image = config.build_path + '/images';
 
 // Tarefa que copia o html para a pasta adequada
 gulp.task('copy-html', function () {
@@ -47,6 +49,24 @@ gulp.task('copy-html', function () {
         config.assets_path + '/views/**/*.html'
     ])
         .pipe(gulp.dest(config.build_path_html))
+        .pipe(livereload());
+});
+
+// Tarefa que copia as fonts para a pasta adequada
+gulp.task('copy-font', function () {
+    gulp.src([
+        config.assets_path + '/fonts/**/*'
+    ])
+        .pipe(gulp.dest(config.build_path_font))
+        .pipe(livereload());
+});
+
+// Tarefa que copia as imagens para a pasta adequada
+gulp.task('copy-image', function () {
+    gulp.src([
+        config.assets_path + '/images/**/*'
+    ])
+        .pipe(gulp.dest(config.build_path_image))
         .pipe(livereload());
 });
 
@@ -81,7 +101,7 @@ gulp.task('copy-scripts', function () {
 // ele já vai buscar automaticamente.
 gulp.task('watch-dev', ['clear-build-folder'], function () {
     livereload.listen();
-    gulp.start('copy-styles', 'copy-scripts', 'copy-html');
+    gulp.start('copy-styles', 'copy-scripts', 'copy-html', 'copy-font', 'copy-image');
     gulp.watch(config.assets_path + '/**', [
         'copy-styles',
         'copy-scripts',
@@ -96,11 +116,11 @@ gulp.task('clear-build-folder', function () {
 // Tarefa padrão para chamar somente com o comando gulp
 gulp.task('default', ['clear-build-folder'], function () {
 
-    gulp.start('copy-html');
+    gulp.start('copy-html', 'copy-font', 'copy-image');
 
     elixir(function (mix) {
         mix.styles(
-            config.vendor_path_css.concat([config.assets_path + '/css/**/*']),
+            config.vendor_path_css.concat([config.assets_path + 's/css/**/*']),
             'public/css/all.css', config.assets_path
         );
 

@@ -32,9 +32,9 @@ class ProjectNoteRepositoryEloquent extends BaseRepository implements ProjectNot
     }
 
     // Desativando o Presenter para as aulas de CRUD do Angular
-//    public function presenter()
-//    {
-//        return ProjectNotePresenter::class;
-//    }
+    public function presenter()
+    {
+        return ProjectNotePresenter::class;
+    }
 
 }

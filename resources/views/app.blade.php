@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Laravel</title>
     @if(Config::get('app.debug'))
-        <link rel="stylesheet" href="{{ asset('build/css/vendor/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('build/css/vendor/bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/components.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/flaticon.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/font-awesome.css') }}">
     @else
         <link rel="stylesheet" href="{{ elixir('css/all.css') }}">
 
@@ -44,13 +46,13 @@
 
             <ul class="nav navbar-nav navbar-right">
                 @if (Auth::guest())
-                    <li><a href="{{ url('/auth/login') }}">Login</a></li>
-                    <li><a href="{{ url('/auth/register') }}">Register</a></li>
+                    <li><a href="{{ url('/#/login') }}">Login</a></li>
+                    <li><a href="{{ url('/#/register') }}">Register</a></li>
                 @else
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ Auth::user()->name }} <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+                            <li><a href="{{ url('/#/logout') }}">Logout</a></li>
                         </ul>
                     </li>
                 @endif
@@ -88,17 +90,28 @@
     <script src="{{ asset('build/js/controllers/client/clientEdit.js') }}"></script>
     <script src="{{ asset('build/js/controllers/client/clientRemove.js') }}"></script>
 
-    <!-- CONTROLLERS PROJECT NOTES -->
-    <script src="{{ asset('build/js/controllers/project_notes/projectNotesList.js') }}"></script>
-    <script src="{{ asset('build/js/controllers/project_notes/projectNotesNew.js') }}"></script>
-    <script src="{{ asset('build/js/controllers/project_notes/projectNotesDetails.js') }}"></script>
-    <script src="{{ asset('build/js/controllers/project_notes/projectNotesEdit.js') }}"></script>
-    <script src="{{ asset('build/js/controllers/project_notes/projectNotesRemove.js') }}"></script>
+    <!-- CONTROLLERS PROJECT -->
+    <script src="{{ asset('build/js/controllers/project/projectList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project/projectDetails.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project/projectNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project/projectEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project/projectRemove.js') }}"></script>
 
+    <!-- CONTROLLERS PROJECT NOTE -->
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesDetails.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesRemove.js') }}"></script><!-- SERVICES -->
+
+    <!-- FILTERS -->
+    <script src="{{ asset('build/js/filters/dateBr.js') }}"></script>
 
     <!-- SERVICES -->
     <script src="{{ asset('build/js/services/client.js') }}"></script>
     <script src="{{ asset('build/js/services/projectNotes.js') }}"></script>
+    <script src="{{ asset('build/js/services/user.js') }}"></script>
+    <script src="{{ asset('build/js/services/project.js') }}"></script>
 
 
 @else

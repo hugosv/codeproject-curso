@@ -10,6 +10,8 @@ use CodeProject\Repositories\ClientRepository;
 use CodeProject\Repositories\ClientRepositoryEloquent;
 use CodeProject\Repositories\ProjectTaskRepository;
 use CodeProject\Repositories\ProjectTaskRepositoryEloquent;
+use CodeProject\Repositories\UserRepository;
+use CodeProject\Repositories\UserRepositoryEloquent;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -50,6 +52,11 @@ class CodeProjectRepositoryProvider extends ServiceProvider
         $this->app->bind(
             ProjectTaskRepository::class,
             ProjectTaskRepositoryEloquent::class
+        );
+
+        $this->app->bind(
+            UserRepository::class,
+            UserRepositoryEloquent::class
         );
     }
 }

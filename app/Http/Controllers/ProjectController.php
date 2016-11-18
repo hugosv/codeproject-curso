@@ -39,7 +39,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return $this->service->all();
+        $userId = Authorizer::getResourceOwnerId();
+        return $this->service->all($userId);
     }
 
     /**

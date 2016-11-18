@@ -496,9 +496,11 @@ f+" > 4096 bytes)!");k.cookie=e}}c.module("ngCookies",["ng"]).provider("$cookies
  * Created by hugo on 9/24/16.
  */
 
-var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers']);
+var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers', 'app.services']);
 
 angular.module('app.controllers', ['ngMessages', 'angular-oauth2']);
+angular.module('app.services', ['ngResource']);
+
 
 app.provider('appConfig', function(){
    var config = {
@@ -515,8 +517,8 @@ app.provider('appConfig', function(){
 });
 
 app.config([
-    '$routeProvider', 'OAuthProvider', 'appConfigProvider',
-    function ($routeProvider, OAuthProvider, appConfigProvider) {
+    '$routeProvider', 'OAuthProvider', 'OAuthTokenProvider', 'appConfigProvider',
+    function ($routeProvider, OAuthProvider, OAuthTokenProvider, appConfigProvider) {
 
     $routeProvider
         .when('/login', {
@@ -529,9 +531,48 @@ app.config([
             controller: 'HomeController'
           })
 
+        // clients
         .when('/clients', {
             templateUrl: 'build/views/client/list.html',
             controller: 'ClientListController'
+        })
+        .when('/clients/new', {
+            templateUrl: 'build/views/client/new.html',
+            controller: 'ClientNewController'
+        })
+        .when('/clients/:id', {
+            templateUrl: 'build/views/client/details.html',
+            controller: 'ClientDetailsController'
+        })
+         .when('/clients/:id/edit', {
+            templateUrl: 'build/views/client/edit.html',
+            controller: 'ClientEditController'
+        })
+        .when('/clients/:id/remove', {
+            templateUrl: 'build/views/client/remove.html',
+            controller: 'ClientRemoveController'
+        })
+
+        // project notes
+        .when('/project/:id/notes', {
+            templateUrl: 'build/views/projectNotes/list.html',
+            controller: 'ProjectNotesListController'
+        })
+        .when('/project/:id/notes/new', {
+            templateUrl: 'build/views/projectNotes/new.html',
+            controller: 'ProjectNotesNewController'
+        })
+        .when('/project/:id/notes/:idNote', {
+            templateUrl: 'build/views/projectNotes/details.html',
+            controller: 'ProjectNotesDetailsController'
+        })
+        .when('/project/:id/notes/:idNote/edit', {
+            templateUrl: 'build/views/projectNotes/edit.html',
+            controller: 'ProjectNotesEditController'
+        })
+        .when('/project/:id/notes/:idNote/remove', {
+            templateUrl: 'build/views/projectNotes/remove.html',
+            controller: 'ProjectNotesRemoveController'
         });
 
     OAuthProvider.configure({
@@ -540,6 +581,13 @@ app.config([
         clientSecret: 'secret', // optional
         grantPath: 'oauth/access_token'
     });
+
+    OAuthTokenProvider.configure({
+        name: 'token',
+        options: {
+            secure: false
+        }
+    })
 
 }]);
 
@@ -593,64 +641,147 @@ angular.module('app.controllers')
     }]);
 
 
-<h1>Você está logado</h1>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body">
-
-                    <div class="alert alert-danger" ng-show="error.error">
-                        <strong>Whoops!</strong> Alguma coisa deu errado<br><br>
-                        <ul>
-                            <li>{{ error.message }}</li>
-                        </ul>
-                    </div>
-
-                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="login()">
-
-                    <div class="form-group" ng-class="{'has-error': !form.username.$valid && form.username.$touched}">
-                        <label class="col-md-4 control-label">E-Mail Address</label>
-                        <div class="col-md-6">
-
-                            <input type="text" class="form-control" name="username" ng-model="user.username" required>
-
-                            <div ng-messages="form.username.$error" class="help-block" ng-show="form.username.$touched">
-                                <div ng-message="required">Obrigatório</div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group" ng-class="{'has-error': !form.password.$valid && form.password.$touched}">
-                        <label class="col-md-4 control-label">Password</label>
-                        <div class="col-md-6">
-
-                            <input type="password" class="form-control" name="password" ng-model="user.password" required>
-
-                            <div ng-messages="form.password.$error" class="help-block" ng-show="form.password.$touched">
-                                <div ng-message="required">Obrigatório</div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-md-6 col-md-offset-4">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </div>
-                    </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+angular.module('app.services')
+    .service('Client', ['$resource', 'appConfig', function ($resource, appConfig) {
+        return $resource(appConfig.baseUrl + '/client/:id', {id: '@id'}, {
+            update: {
+                method: 'PUT'
+            }
+        });
+    }]);
+angular.module('app.services')
+    .service('ProjectNotes', ['$resource', 'appConfig', function ($resource, appConfig) {
+        return $resource(appConfig.baseUrl + '/project/:id/notes/:idNote', {id: '@id', idNote: '@idNote'}, {
+            update: {
+                method: 'PUT'
+            }
+        });
+    }]);
 angular.module('app.controllers')
-    .controller('ClientListController', ['$scope', function($scope) {
+    .controller('ClientDetailsController',
+    ['$scope', '$routeParams', 'Client',
 
-        $scope.clients = [];
+        function($scope, $routeParams, Client) {
+
+            $scope.client = Client.get({id: $routeParams.id});
+
+        }
+    ]);
+angular.module('app.controllers')
+    .controller('ClientEditController',
+    ['$scope', '$location','$routeParams', 'Client',
+
+        function($scope, $location, $routeParams, Client) {
+
+            $scope.client = Client.get({id: $routeParams.id});
+
+            $scope.save = function() {
+                if($scope.form.$valid) {
+                    Client.update({id: $scope.client.id}, $scope.client, function () {
+                        $location.path('/clients');
+                    });
+                }
+            }
+
+        }
+    ]);
+angular.module('app.controllers')
+    .controller('ClientListController', ['$scope', 'Client',  function($scope, Client) {
+        $scope.clients = Client.query();
+    }]);
+angular.module('app.controllers')
+    .controller('ClientNewController', ['$scope', '$location', 'Client',  function($scope, $location, Client) {
+        $scope.client = new Client();
+
+        $scope.save = function() {
+            $scope.client.$save().then(function () {
+                $location.path('/clients');
+            });
+        }
+    }]);
+angular.module('app.controllers')
+    .controller('ClientRemoveController',
+
+    ['$scope', '$location','$routeParams', 'Client',
+
+        function($scope, $location, $routeParams, Client) {
+
+            $scope.client = Client.get({id: $routeParams.id});
+
+            $scope.remove = function() {
+
+                $scope.client.$delete().then( function () {
+                    $location.path('/clients');
+                });
+
+            }
+        }
+    ]);
+angular.module('app.controllers')
+    .controller('ProjectNotesDetailsController',
+    ['$scope', '$routeParams', 'ProjectNotes',  function($scope, $routeParams, ProjectNotes) {
+        $scope.projectNotes = ProjectNotes.get({id: $routeParams.id, idNote: $routeParams.idNote});
+    }]);
+angular.module('app.controllers')
+    .controller('ProjectNotesEditController',
+    ['$scope', '$routeParams', '$location', 'ProjectNotes',  function($scope, $routeParams, $location, ProjectNotes) {
+
+        $scope.projectNotes = ProjectNotes.get({id: $routeParams.id, idNote: $routeParams.idNote});
+
+        $scope.save = function() {
+            if($scope.form.$valid) {
+                ProjectNotes.update({id: $scope.projectNotes.project_id, idNote: $scope.projectNotes.id}, $scope.projectNotes, function () {
+                    $location.path('/project/' + $scope.projectNotes.project_id + '/notes');
+                });
+            }
+        }
 
     }]);
+angular.module('app.controllers')
+    .controller('ProjectNotesListController',
+    ['$scope', '$routeParams', 'ProjectNotes',  function($scope, $routeParams, ProjectNotes) {
+        $scope.projectNotes = ProjectNotes.query({id: $routeParams.id});
+    }]);
+angular.module('app.controllers')
+    .controller('ProjectNotesNewController',
+    ['$scope', '$routeParams', '$location', 'ProjectNotes',  function($scope, $routeParams, $location, ProjectNotes) {
+
+        $scope.projectId = $routeParams.id;
+        $scope.projectNotes = new ProjectNotes;
+
+        $scope.save = function() {
+            if($scope.form.$valid) {
+                ProjectNotes.save({id: $scope.projectId }, $scope.projectNotes, function () {
+                    $location.path('/project/' + $scope.projectId + '/notes');
+                });
+            }
+        }
+
+    }]);
+angular.module('app.controllers')
+    .controller('ProjectNotesRemoveController',
+
+    ['$scope', '$location', '$routeParams', 'ProjectNotes',
+        function($scope, $location, $routeParams, ProjectNotes) {
+
+            $scope.projectId = $routeParams.id;
+
+            $scope.projectNotes = ProjectNotes.get({id: $routeParams.id, idNote: $routeParams.idNote});
+
+            $scope.remove = function() {
+
+                    $scope.projectNotes.$delete(
+                        {
+
+                            id: $scope.projectNotes.project_id,
+                            idNote: $scope.projectNotes.id
+
+                        }).then( function () {
+                        $location.path('/project/' + $scope.projectId + '/notes');
+                    });
+
+                }
+            }
+
+    ]);
 //# sourceMappingURL=all.js.map

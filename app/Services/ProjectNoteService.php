@@ -74,7 +74,15 @@ class ProjectNoteService
     {
         try {
 
-            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId])->first();
+            $result =  $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId]);
+
+            if(isset($result['data']) && count($result['data'])==1){
+                $result = [
+                    'data' => $result['data'][0]
+                ];
+            }
+
+            return $result;
 
         } catch ( \Exception $e )
         {
@@ -114,18 +122,19 @@ class ProjectNoteService
      * @param $projectId
      * @param $noteId
      */
-    public function delete($projectId, $noteId)
+    public function delete($noteId)
     {
         try {
 
-            return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId])->first()->delete() ? 'Deletado' : 'Não foi possível deletar';
+            return $this->repository->delete($noteId) ? 'Deletado' : 'Não foi possível deletar';
+            //findWhere(['project_id' => $projectId, 'id' => $noteId])->delete() ? 'Deletado' : 'Não foi possível deletar';
 
         }
         catch (\Exception $e)
         {
             return [
                 'error' => true,
-                'message' => 'An error ocurred on delete'
+                'message' => 'An error ocurred on delete note '
             ];
         }
 
