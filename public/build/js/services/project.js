@@ -1,26 +1,37 @@
 angular.module('app.services')
-    .service('Project', ['$resource', 'appConfig', function ($resource, appConfig) {
-        return $resource(appConfig.baseUrl + '/project/:id', {id: '@id'}, {
-            save: {
-                method: 'POST',
-                isArray: false,
-                transformResponse: function(data) {
-                    var obj = angular.fromJson(data);
-                    obj.due_date = new Date(obj.due_date);
-                    return obj;
+    .service('Project', ['$resource', '$filter', '$httpParamSerializer', 'appConfig',
+        function ($resource, $filter, $httpParamSerializer, appConfig) {
+            function transformData(data) {
+                if(angular.isObject(data) && data.hasOwnProperty('due_date')) {
+                    var o = angular.copy(data);
+                    o.due_date = $filter('date')(o.due_date, 'yyyy-MM-dd');
+                    return appConfig.utils.transformRequest(o);
                 }
-            },
-            get: {
-                method: 'GET',
-                isArray: false,
-                transformResponse: function (data) {
-                    var obj = angular.fromJson(data);
-                    obj.due_date = new Date(obj.due_date);
-                    return obj;
+                return data;
+            };
+
+            return $resource(appConfig.baseUrl + '/project/:id', {id: '@id'}, {
+                save: {
+                    method: 'POST',
+                    transformRequest: transformData
+                },
+
+                get: {
+                    method: 'GET',
+                    transformResponse: function (data, headers) {
+                        var o = appConfig.utils.transformResponse(data, headers);
+                        if (angular.isObject(o) && o.hasOwnProperty('due_date')) {
+                            var arrayDate = o.due_date.split('-');
+                            o.due_date = new Date(arrayDate[0], arrayDate[1]-1, arrayDate[2]);
+                        }
+                        return o;
+                    }
+                },
+
+                update: {
+                    method: 'PUT',
+                    transformRequest: transformData
                 }
-            },
-            update: {
-                method: 'PUT'
-            }
-        });
-    }]);
+
+            });
+        }]);

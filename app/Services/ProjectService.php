@@ -145,7 +145,9 @@ class ProjectService
     {
         try
         {
-            return $this->repository->find($id)->delete();
+//            return $this->repository->find($id)->delete();
+            $this->repository->skipPresenter()->find($id)->delete();
+            return ['message' => 'Projeto removido com sucesso'];
 
         } catch (  \Exception $e ) {
 

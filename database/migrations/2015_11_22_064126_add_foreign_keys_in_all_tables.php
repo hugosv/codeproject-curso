@@ -13,25 +13,25 @@ class AddForeignKeysInAllTables extends Migration
     public function up()
     {
         Schema::table('project_files', function (Blueprint $table) {
-            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
 
         Schema::table('project_tasks', function(Blueprint $table) {
-            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
 
         Schema::table('project_members', function(Blueprint $table) {
-             $table->foreign('project_id')->references('id')->on('projects');
-             $table->foreign('member_id')->references('id')->on('users');
+             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
+             $table->foreign('member_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::table('project_notes', function(Blueprint $table) {
-            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
 
         Schema::table('projects', function(Blueprint$table) {
-            $table->foreign('owner_id')->references('id')->on('users');
-            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
 
     }
