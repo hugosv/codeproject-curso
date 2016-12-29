@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Project Files List</div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Link</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="o in projectFiles">
+                            <td>{{o.name}}</td>
+                            <td>{{o.description | limitTo:35 }}...</td>
+                            <td>
+                                <!--<a ng-href="/project/file/{{o.id}}/download" target="_blank">Download</a>-->
+                                <project-file-download id-file="{{o.id}}"></project-file-download>
+                            </td>
+                            <td>
+                                <a ng-href="#/project/{{o.project_id}}/files/{{o.id}}/edit">Edit</a> |
+                                <a ng-href="#/project/{{o.project_id}}/files/{{o.id}}/remove">Delete</a>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

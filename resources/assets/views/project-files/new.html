@@ -1,0 +1,61 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">New Project File</div>
+                <div class="panel-body">
+
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="save()">
+
+                        <div class="form-group" ng-class="{'has-error': !form.name.$valid && form.name.$touched}">
+                            <label class="col-md-4 control-label">Name:</label>
+                            <div class="col-md-6">
+
+                                <input type="text" class="form-control" name="name" ng-model="projectFiles.name" required>
+
+                                <div ng-messages="form.name.$error" class="help-block" ng-show="form.name.$touched">
+                                    <div ng-message="required">Required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': !form.description.$valid && form.description.$touched}">
+                            <label class="col-md-4 control-label">Description:</label>
+                            <div class="col-md-6">
+
+                                <textarea class="form-control" name="description" ng-model="projectFiles.description" required></textarea>
+
+                                <div ng-messages="form.description.$error" class="help-block" ng-show="form.description.$touched">
+                                    <div ng-message="required">Required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': !form.file.$valid && form.file.$touched}">
+                            <label class="col-md-4 control-label">File:</label>
+                            <div class="col-md-6">
+                                 <!--<input type="file" class="form-control" ngf-select ng-model="projectFiles.file" name="file">-->
+                                <div class="btn-info btn" ngf-select ng-model="projectFiles.file" name="file"> Select </div>
+                                {{projectFiles.file.name}}
+
+                                <div ng-messages="form.file.$error" class="help-block" ng-show="form.file.$touched">
+                                    <div ng-message="required">Required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

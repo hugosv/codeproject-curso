@@ -11,6 +11,8 @@ use Prettus\Validator\Exceptions\ValidatorException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as Storage;
 
+use LucaDegasperi\OAuth2Server\Facades\Authorizer;
+
 /**
  * Class ProjectService
  * @package CodeProject\Services
@@ -78,7 +80,7 @@ class ProjectService
             {
                 return [
                     'error'   => true,
-                    'message' => 'Project does not exist' + $message ,
+                    'message' => 'Project does not exist' . $id,
                 ];
             }
 
@@ -145,7 +147,6 @@ class ProjectService
     {
         try
         {
-//            return $this->repository->find($id)->delete();
             $this->repository->skipPresenter()->find($id)->delete();
             return ['message' => 'Projeto removido com sucesso'];
 
@@ -186,8 +187,6 @@ class ProjectService
         }
 
         return false;
-
-
     }
 
     /**
@@ -303,6 +302,34 @@ class ProjectService
             ];
         }
 
+    }
+
+    /**
+     * @param $projectId
+     * @return mixed
+     */
+    public function checkProjectOwner($projectId)
+    {
+        $userId =  Authorizer::getResourceOwnerId();
+
+        return $this->isOwner($projectId, $userId);
+    }
+
+    public function checkProjectMember($projectId)
+    {
+        $userId =  Authorizer::getResourceOwnerId();
+
+        return $this->isMember($projectId, $userId);
+    }
+
+    public function checkProjectPermission($projectId)
+    {
+        if ( $this->checkProjectOwner($projectId) or $this->checkProjectMember($projectId) )
+        {
+            return true;
+        }
+
+        return false;
     }
 
 

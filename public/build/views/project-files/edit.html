@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Project File Edit</div>
+                <div class="panel-body">
+
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="save()">
+
+                        <div class="form-group" ng-class="{'has-error': !form.name.$valid && form.name.$touched}">
+                            <label class="col-md-4 control-label">Name:</label>
+                            <div class="col-md-6">
+
+                                <input type="text" class="form-control" name="name" ng-model="projectFiles.name" required>
+
+                                <div ng-messages="form.name.$error" class="help-block" ng-show="form.name.$touched">
+                                    <div ng-message="required">Required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': !form.description.$valid && form.description.$touched}">
+                            <label class="col-md-4 control-label">Description:</label>
+                            <div class="col-md-6">
+
+                                <textarea class="form-control" name="description" ng-model="projectFiles.description" required></textarea>
+
+                                <div ng-messages="form.description.$error" class="help-block" ng-show="form.description.$touched">
+                                    <div ng-message="required">Required</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <project-file-download id-file="{{projectFiles.id}}"></project-file-download>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

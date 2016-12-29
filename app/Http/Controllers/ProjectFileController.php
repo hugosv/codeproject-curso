@@ -2,123 +2,95 @@
 
 namespace CodeProject\Http\Controllers;
 
-use CodeProject\Entities\ProjectFile;
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectFileRepository;
+use CodeProject\Services\ProjectFileService;
 use Illuminate\Http\Request;
-
-use CodeProject\Http\Requests;
-use Mockery\CountValidator\Exception;
-use Validator;
 
 class ProjectFileController extends Controller
 {
 
     /**
-     * @var ProjectRepository
+     * @var ProjectFileRepository
      */
     private $repository;
 
     /**
-     * @var ProjectService
+     * @var ProjectFileService
      */
     private $service;
 
     /**
-     * @param ProjectRepository $repository
-     * @param ProjectService $service
+     * @param ProjectFileRepository $repository
+     * @param ProjectFileService $service
      */
-    public function __construct(ProjectRepository $repository, ProjectService $service)
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service)
     {
         $this->repository = $repository;
         $this->service = $service;
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
+     * @param $id
+     * @return mixed
      */
-    public function index()
+    public function index($id)
     {
-        //
+        return $this->repository->findWhere(['project_id' => $id]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
-     * @return Response
+     * @return bool
      */
     public function store(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'file' => 'required'
-            ]);
+        $file = $request->file('file');
+        $extension = $file->getClientOriginalExtension();
 
-            if($validator->fails()) {
-                return [
-                    'error' => true,
-                    'message' => 'File missing'
-                ];
-            }
+        $data['file'] = $file;
+        $data['extension'] = $extension;
+        $data['name'] = $request->name;
+        $data['project_id'] = $request->project_id;
+        $data['description'] = $request->description;
 
-            $file = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
-
-            $data = [
-                'file' => $file,
-                'extension' => $extension,
-                'name' => $request->name,
-                'project_id' => $request->project_id,
-                'description' => $request->description,
-            ];
-
-            $this->service->createFile($data);
-
-            return [
-                'message' => 'File stored'
-            ];
-
-        } catch(Exception $e) {
-            return [
-                'error' => true,
-                'message' => 'Error'
-            ];
-        }
+        return $this->service->create($data);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return mixed
      */
-    public function show($id)
+    public function showFile($id)
     {
-        //
+        if ($this->service->checkProjectPermissions($id) == false) {
+            return ['error' => 'Access Forbidden'];
+        }
+
+        $filePath = $this->service->getFilePath($id);
+        $fileContent = file_get_contents($filePath);
+        $file64 = base64_encode($fileContent);
+
+        return [
+            'file' => $file64,
+            'size' => filesize($filePath),
+            'name' => $this->service->getFileName($id),
+        ];
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Display the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return mixed
      */
-    public function edit($id)
+    public function show($id, $fileId)
     {
-        //
+        return $this->repository->find($fileId);
     }
 
     /**
@@ -126,22 +98,28 @@ class ProjectFileController extends Controller
      *
      * @param  Request  $request
      * @param  int  $id
-     * @return Response
+     * @return mixed
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $fileId)
     {
-        //
+        if($this->service->checkProjectOwner($fileId) == false) {
+            return['error' => 'Access Forbiden'];
+        }
+        return $this->service->update($request->all(), $fileId);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return Response
+     * @return mixed
      */
     public function destroy($id, $fileId)
     {
-        return $this->service->deleteFile($id, $fileId);
+        if ($this->service->checkProjectOwner($fileId) == false) {
+            return ['error' => 'Access Forbiden'];
+        }
+        $this->service->delete($fileId);
     }
 
 }

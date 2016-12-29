@@ -3,19 +3,53 @@ angular.module('app.controllers')
         ['$scope', '$routeParams', '$location', '$cookies', 'Project', 'Client', 'appConfig',
             function($scope, $routeParams, $location, $cookies, Project, Client, appConfig) {
 
-                $scope.project = Project.get({id: $routeParams.id});
-                $scope.clients = Client.query();
+                Project.get({id: $routeParams.id}, function (data) {
+                    $scope.project = data;
+                    // Client.get({id: data.client_id}, function (data) {
+                    //    $scope.clientSelected = data;
+                    // });
+                    $scope.clientSelected = data.client;
+                });
+
                 $scope.status = appConfig.project.status;
 
-                $scope.save = function() {
-                    if($scope.form.$valid) { // Se o formulário está válido
-                        // Então aplica o id do usuário, senão não retorna nada.
-                        $scope.project.owner_id = $cookies.getObject('user').id;
+                $scope.due_date = {
+                    status: {
+                        opened: false
+                    }
+                };
 
+                $scope.open = function ($event) {
+                    $scope.due_date.status.opened = true;
+                };
+
+
+                $scope.save = function() {
+                    if($scope.form.$valid) {
+                        $scope.project.owner_id = $cookies.getObject('user').id;
                         Project.update({id: $scope.project.id}, $scope.project, function () {
                             $location.path('/project');
-
                         });
                     }
-                }
+                };
+
+                $scope.formatName = function (model) {
+                    if(model) {
+                        return model.name;
+                    }
+                    return '';
+                };
+
+                $scope.getClients = function (name) {
+                    return Client.query({
+                        search: name,
+                        searchFields: 'name:like'
+                    }).$promise;
+                };
+
+                $scope.selectClient = function(item){
+                    $scope.project.client_id = item.id;
+                };
+
+
             }]);

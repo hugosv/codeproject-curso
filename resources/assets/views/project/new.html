@@ -35,9 +35,30 @@
                         <div class="form-group" ng-class="{'has-error': !form.due_date.$valid && form.due_date.$touched}">
                             <label class="col-md-4 control-label">Due Date:</label>
                             <div class="col-md-6">
-                                <input type="date" class="form-control" name="due_date" ng-model="project.due_date" required />
+                                <p class="input-group">
+                                    <input type="text" name="due_date"
+                                           class="form-control"
+                                           datepicker-popup="dd/MM/yyyy"
+                                           ng-model="project.due_date"
+                                           is-open="due_date.status.opened"
+                                           close-text="Close"
+                                           required />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="open($event)">{{ due_date.opened }} <i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                    <!--<div style="display:inline-block; min-height:290px;">-->
+                                        <!--<datepicker name="due_date"-->
+                                                    <!--ng-model="project.due_date"-->
+                                                    <!--show-weeks="false"-->
+                                                    <!--class="well well-sm">-->
+                                                    <!--required-->
+                                        <!--</datepicker>-->
+                                    <!--</div>-->
+                                </p>
+
                                 <div ng-messages="form.due_date.$error" class="help-block" ng-show="form.due_date.$touched">
                                     <div ng-message="required">Mandatory</div>
+                                    <div ng-message="date">Invalid Date</div>
                                 </div>
                             </div>
                         </div>
@@ -45,15 +66,19 @@
                         <div class="form-group" ng-class="{'has-error': !form.client_id.$valid && form.client_id.$touched}">
                             <label class="col-md-4 control-label">Client:</label>
                             <div class="col-md-6">
-
-                                <select class="form-control" name="client_id" ng-model="project.client_id"
-                                        ng-options="o.id as o.name for o in clients" required>
-                                    <option value=""><-- Select the client --></option>
-                                </select>
+                                <input type="text" class="form-control" name="client_id"
+                                       ng-model="clientSelected"
+                                       typeahead="o as o.name for o in getClients($viewValue)|limitTo:10"
+                                       typeahead-input-formatter="formatName($model)"
+                                       typeahead-on-select="selectClient($item)"
+                                       typeahead-editable="false"
+                                       required />
 
                                 <div ng-messages="form.client_id.$error" class="help-block" ng-show="form.client_id.$touched">
                                     <div ng-message="required">Mandatory</div>
+                                    <div ng-message="editable">Select a valid client</div>
                                 </div>
+
                             </div>
                         </div>
 

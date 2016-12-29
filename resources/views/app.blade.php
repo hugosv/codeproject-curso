@@ -73,11 +73,13 @@
     <script src="{{ asset('build/js/vendor/angular-resource.min.js') }}"></script>
     <script src="{{ asset('build/js/vendor/angular-animate.min.js') }}"></script>
     <script src="{{ asset('build/js/vendor/angular-messages.min.js') }}"></script>
-    <script src="{{ asset('build/js/vendor/ui-bootstrap.min.js') }}"></script>
+    <script src="{{ asset('build/js/vendor/ui-bootstrap-tpls.min.js') }}"></script>
     <script src="{{ asset('build/js/vendor/navbar.min.js') }}"></script>
     <script src="{{ asset('build/js/vendor/angular-cookies.min.js') }}"></script>
     <script src="{{ asset('build/js/vendor/query-string.js') }}"></script>
     <script src="{{ asset('build/js/vendor/angular-oauth2.min.js') }}"></script>
+    <script src="{{ asset('build/js/vendor/ng-file-upload-all.min.js') }}"></script>
+
 
     <script src="{{ asset('build/js/app.js') }}"></script>
 
@@ -102,13 +104,24 @@
     <script src="{{ asset('build/js/controllers/project-notes/projectNotesNew.js') }}"></script>
     <script src="{{ asset('build/js/controllers/project-notes/projectNotesDetails.js') }}"></script>
     <script src="{{ asset('build/js/controllers/project-notes/projectNotesEdit.js') }}"></script>
-    <script src="{{ asset('build/js/controllers/project-notes/projectNotesRemove.js') }}"></script><!-- SERVICES -->
+    <script src="{{ asset('build/js/controllers/project-notes/projectNotesRemove.js') }}"></script>
+
+    <!-- CONTROLLERS PROJECT FILE -->
+    <script src="{{ asset('build/js/controllers/project-files/projectFilesList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-files/projectFilesNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-files/projectFilesEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-files/projectFilesRemove.js') }}"></script>
+
+    <!-- DIRECTIVES -->
+    <script src="{{ asset('build/js/directives/projectFileDownload.js') }}"></script>
 
     <!-- FILTERS -->
     <script src="{{ asset('build/js/filters/dateBr.js') }}"></script>
 
     <!-- SERVICES -->
+    <script src="{{ asset('build/js/services/url.js') }}"></script>
     <script src="{{ asset('build/js/services/client.js') }}"></script>
+    <script src="{{ asset('build/js/services/projectFiles.js') }}"></script>
     <script src="{{ asset('build/js/services/projectNotes.js') }}"></script>
     <script src="{{ asset('build/js/services/user.js') }}"></script>
     <script src="{{ asset('build/js/services/project.js') }}"></script>
