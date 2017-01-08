@@ -6,8 +6,6 @@ use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Services\ProjectNoteService;
 use Illuminate\Http\Request;
 
-use CodeProject\Http\Requests;
-
 class ProjectNoteController extends Controller
 {
 

@@ -14,10 +14,10 @@ class CreateProjectTasksTable extends Migration
     {
         Schema::create('project_tasks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
             $table->integer('project_id')->unsigned();
-            $table->date('start_date');
-            $table->date('due_date');
+            $table->string('name');
+            $table->date('start_date')->nullable();
+            $table->date('due_date')->nullable();
             $table->smallInteger('status');
             $table->timestamps();
         });

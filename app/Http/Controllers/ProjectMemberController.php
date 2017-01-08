@@ -2,11 +2,9 @@
 
 namespace CodeProject\Http\Controllers;
 
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectMemberRepository;
+use CodeProject\Services\ProjectMemberService;
 use Illuminate\Http\Request;
-
-use CodeProject\Http\Requests;
-use CodeProject\Http\Controllers\Controller;
 
 /**
  * Class ProjectMemberController
@@ -16,17 +14,25 @@ class ProjectMemberController extends Controller
 {
 
     /**
-     * @var ProjectService
+     * @var ProjectMemberService
      */
     private $service;
+    /**
+     * @var ProjectMemberRepository
+     */
+    private $repository;
 
     /**
-     * @param ProjectService $service
+     * @param ProjectMemberRepository $repository
+     * @param ProjectMemberService $service
      */
-    public function __construct(ProjectService $service)
+    public function __construct(ProjectMemberRepository $repository, ProjectMemberService $service)
     {
 
         $this->service = $service;
+        $this->repository = $repository;
+        $this->middleware('check-project-owner', ['except' => ['index', 'show']]);
+        $this->middleware('check-project-permission', ['except' => ['store', 'destroy']]);
     }
 
     /**
@@ -35,17 +41,20 @@ class ProjectMemberController extends Controller
      */
     public function index($projectId)
     {
-        return $this->service->getMembers($projectId);
+        return $this->repository->findWhere(['project_id' => $projectId]);
     }
 
     /**
+     * @param Request $request
      * @param $projectId
-     * @param $memberId
-     * @return array
+     * @return array|mixed
      */
-    public function store($projectId, $memberId)
+    public function store(Request $request, $projectId)
     {
-        return $this->service->addMember($projectId, $memberId);
+        $data = $request->all();
+        $data['project_id'] = $projectId;
+
+        return $this->service->create($data);
     }
 
     /**
@@ -55,7 +64,7 @@ class ProjectMemberController extends Controller
      */
     public function show($projectId, $memberId)
     {
-        return $this->service->isMember($projectId, $memberId) ? ['message' => 'Is member' ] : [ 'message' => 'Is not member'];
+        return $this->repository->find($memberId);
     }
 
     /**
@@ -63,8 +72,8 @@ class ProjectMemberController extends Controller
      * @param $memberId
      * @return array
      */
-    public function delete($projectId, $memberId)
+    public function destroy($projectId, $memberId)
     {
-        return $this->service->removeMember($projectId, $memberId);
+        $this->service->delete($memberId);
     }
 }

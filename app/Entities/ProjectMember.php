@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
+/**
+ * @property mixed member
+ */
 class ProjectMember extends Model implements Transformable
 {
     use TransformableTrait;
@@ -14,4 +17,14 @@ class ProjectMember extends Model implements Transformable
         'project_id',
         'member_id',
     ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

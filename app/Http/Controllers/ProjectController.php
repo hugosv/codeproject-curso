@@ -6,7 +6,6 @@ use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
 use Illuminate\Http\Request;
 
-use CodeProject\Http\Requests;
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 class ProjectController extends Controller
@@ -30,6 +29,9 @@ class ProjectController extends Controller
     {
         $this->repository = $repository;
         $this->service = $service;
+        $this->middleware('check-project-owner', ['except' => ['index', 'store', 'show']]);
+        $this->middleware('check-project-permission', ['except' => ['index', 'store', 'update', 'destroy']]);
+
     }
 
     /**
@@ -40,7 +42,8 @@ class ProjectController extends Controller
     public function index()
     {
         $userId = Authorizer::getResourceOwnerId();
-        return $this->service->all($userId);
+//        return $this->service->all($userId);
+        return $this->repository->findWithOwnerAndMember($userId);
     }
 
     /**

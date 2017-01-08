@@ -21,50 +21,20 @@ use Illuminate\Filesystem\Filesystem;
  */
 class ProjectFileService
 {
-
-    /**
-     * @var ProjectFileRepository
-     */
     private $repository;
-    /**
-     * @var ProjectRepository
-     */
     private $projectRepository;
-    /**
-     * @var ProjectFileValidator
-     */
     private $validator;
-    /**
-     * @var Filesystem
-     */
     private $filesystem;
-    /**
-     * @var Storage
-     */
     private $storage;
-    /**
-     * @var ProjectService
-     */
-    private $projectService;
 
-    /**
-     * ProjectFileService constructor.
-     * @param ProjectFileRepository $repository
-     * @param ProjectRepository $projectRepository
-     * @param ProjectFileValidator $validator
-     * @param Filesystem $filesystem
-     * @param Storage $storage
-     */
     public function __construct(ProjectFileRepository $repository, ProjectRepository $projectRepository, ProjectFileValidator $validator,
-                                Filesystem $filesystem, Storage $storage, ProjectService $projectService)
-
+                                Filesystem $filesystem, Storage $storage)
     {
         $this->repository = $repository;
         $this->projectRepository = $projectRepository;
         $this->validator = $validator;
         $this->filesystem = $filesystem;
         $this->storage = $storage;
-        $this->projectService = $projectService;
     }
 
     public function create(array $data)
@@ -130,33 +100,10 @@ class ProjectFileService
     {
         switch ($this->storage->getDefaultDriver()) {
             case 'local':
-                return $this->storage->getDriver()->getAdapter()->getPathPrefix() . '/' . $projectFile->getFileName();
+                return $this->storage->getDriver()->getAdapter()->getPathPrefix()
+                        . '/' . $projectFile->getFileName();
         }
 
     }
 
-    public function checkProjectOwner($projectFileId)
-    {
-        $userId =  Authorizer::getResourceOwnerId();
-        $projectId = $this->repository->skipPresenter()->find($projectFileId)->project_id;
-
-        return $this->projectService->isOwner($projectId, $userId);
-    }
-
-    public function checkProjectMember($projectFileId)
-    {
-        $userId =  Authorizer::getResourceOwnerId();
-        $projectId = $this->repository->skipPresenter()->find($projectFileId)->project_id;
-
-        return $this->projectService->isMember($projectId, $userId);
-
-    }
-
-    public function checkProjectPermissions($projectFileId)
-    {
-        if($this->checkProjectOwner($projectFileId) or $this->checkProjectMember($projectFileId)) {
-            return true;
-        }
-        return false;
-    }
 }

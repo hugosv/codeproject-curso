@@ -32,6 +32,42 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
     }
 
     /**
+     * @param $projectId
+     * @param $userId
+     * @return bool
+     */
+    public function isOwner($projectId, $userId)
+    {
+        if (count($this->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId] ) ))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $projectId
+     * @param $userId
+     * @return array
+     */
+    public function hasMember($projectId, $userId)
+    {
+        return $this->skipPresenter()->find($projectId)->members()->find($userId) ? true : false;
+    }
+
+    public function findWithOwnerAndMember($userId)
+    {
+        return $this->scopeQuery(function ($query) use($userId)
+        {
+            return $query->select('projects.*')
+                ->leftJoin('project_members', 'project_members.project_id', '=', 'projects.id')
+                ->where('project_members.member_id', '=', $userId)
+                ->union($this->model->query()->getQuery()->where('owner_id', '=', $userId));
+        })->all();
+    }
+
+    /**
      * @return mixed
      */
     public function presenter()

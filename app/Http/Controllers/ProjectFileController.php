@@ -4,6 +4,7 @@ namespace CodeProject\Http\Controllers;
 
 use CodeProject\Repositories\ProjectFileRepository;
 use CodeProject\Services\ProjectFileService;
+use CodeProject\Services\ProjectService;
 use Illuminate\Http\Request;
 
 class ProjectFileController extends Controller
@@ -18,15 +19,20 @@ class ProjectFileController extends Controller
      * @var ProjectFileService
      */
     private $service;
+    /**
+     * @var ProjectService
+     */
+    private $projectService;
 
     /**
      * @param ProjectFileRepository $repository
      * @param ProjectFileService $service
      */
-    public function __construct(ProjectFileRepository $repository, ProjectFileService $service)
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service, ProjectService $projectService)
     {
         $this->repository = $repository;
         $this->service = $service;
+        $this->projectService = $projectService;
     }
 
     /**
@@ -65,20 +71,16 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return mixed
      */
-    public function showFile($id)
+    public function showFile($projectId, $fileId)
     {
-        if ($this->service->checkProjectPermissions($id) == false) {
-            return ['error' => 'Access Forbidden'];
-        }
-
-        $filePath = $this->service->getFilePath($id);
+        $filePath = $this->service->getFilePath($fileId);
         $fileContent = file_get_contents($filePath);
         $file64 = base64_encode($fileContent);
 
         return [
             'file' => $file64,
             'size' => filesize($filePath),
-            'name' => $this->service->getFileName($id),
+            'name' => $this->service->getFileName($fileId),
         ];
     }
 
@@ -100,9 +102,9 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return mixed
      */
-    public function update(Request $request, $id, $fileId)
+    public function update(Request $request, $projectId, $fileId)
     {
-        if($this->service->checkProjectOwner($fileId) == false) {
+        if($this->projectService->checkProjectOwner($projectId) == false) {
             return['error' => 'Access Forbiden'];
         }
         return $this->service->update($request->all(), $fileId);
@@ -114,9 +116,9 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return mixed
      */
-    public function destroy($id, $fileId)
+    public function destroy($projectId, $fileId)
     {
-        if ($this->service->checkProjectOwner($fileId) == false) {
+        if ($this->projectService->checkProjectOwner($projectId) == false) {
             return ['error' => 'Access Forbiden'];
         }
         $this->service->delete($fileId);

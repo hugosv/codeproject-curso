@@ -42,24 +42,16 @@ class ProjectTaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store($id, Request $request)
     {
-        return $this->service->create($request->all());
+        $data = $request->all();
+        $data['project_id'] = $id;
+        return $this->service->create($data);
     }
 
     /**
@@ -71,18 +63,8 @@ class ProjectTaskController extends Controller
      */
     public function show($id, $taskId)
     {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+        //return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
+        return $this->repository->find($taskId);
     }
 
     /**
@@ -92,9 +74,11 @@ class ProjectTaskController extends Controller
      * @param $task
      * @return Response
      */
-    public function update(Request $request, $task)
+    public function update(Request $request)
     {
-        return $this->service->update($request->all(), $task);
+        $id = $request['id'];
+
+        return $this->service->update($request->all(), $id);
     }
 
     /**
@@ -104,11 +88,8 @@ class ProjectTaskController extends Controller
      * @return Response
      * @internal param int $id
      */
-    public function destroy( $task )
+    public function destroy($id, $taskId )
     {
-        if( $this->repository->delete($task) )
-        {
-            return 'Deletado';
-        }
+        $this->service->delete($taskId);
     }
 }

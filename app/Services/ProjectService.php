@@ -31,27 +31,15 @@ class ProjectService
     protected $validator;
 
     /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var Storage
-     */
-    private $storage;
-
-    /**
      * @param ProjectRepository $repository
      * @param ProjectValidator $validator
      * @param Filesystem $filesystem
      * @param Storage $storage
      */
-    public function __construct(ProjectRepository $repository, ProjectValidator $validator, Filesystem $filesystem, Storage $storage)
+    public function __construct(ProjectRepository $repository, ProjectValidator $validator)
     {
         $this->repository = $repository;
         $this->validator = $validator;
-        $this->filesystem = $filesystem;
-        $this->storage = $storage;
     }
 
     /**
@@ -176,21 +164,6 @@ class ProjectService
 
     /**
      * @param $projectId
-     * @param $userId
-     * @return bool
-     */
-    public function isOwner($projectId, $userId)
-    {
-        if (count($this->repository->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId] ) ))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $projectId
      * @return array
      */
     public function getMembers($projectId)
@@ -248,78 +221,20 @@ class ProjectService
 
     /**
      * @param $projectId
-     * @param $userId
-     * @return array
-     */
-    public function isMember($projectId, $userId)
-    {
-        try {
-
-            return $this->repository->find($projectId)->members()->find($userId) ? true : false;
-
-        } catch (\Exception $e) {
-
-            return [
-                "error" => true,
-                "message" => $e->getMessage()
-            ];
-
-        }
-    }
-
-    public function createFile(array $data)
-    {
-        $project = $this->repository->skipPresenter()->find($data['project_id']);
-        $projectFile = $project->files()->create($data);
-
-        $this->storage->put($projectFile->project_id . '_' . $projectFile->id . "." . $data['extension'], $this->filesystem->get($data['file']));
-
-    }
-
-    public function deleteFile($projectId, $fileId)
-    {
-        // Busca o arquivo
-        $file = $this->repository->skipPresenter()->find($projectId)->files->find($fileId);
-
-        // Caso não encontre, retorna erro
-        if($file == null)
-        {
-            return [
-                'error'   => true,
-                'message' => 'File not found!',
-            ];
-        }
-
-        // Pega o nome do arquivo e deleta do filesystem
-        $fileName = $file->project_id . '_' . $file->id . '.' . $file->extension;
-        $this->storage->delete($fileName);
-
-        // Deleta o arquivo do banco de dados
-        if( $file->delete() )
-        {
-            return [
-                'message' => 'File deleted success'
-            ];
-        }
-
-    }
-
-    /**
-     * @param $projectId
      * @return mixed
      */
     public function checkProjectOwner($projectId)
     {
         $userId =  Authorizer::getResourceOwnerId();
 
-        return $this->isOwner($projectId, $userId);
+        return $this->repository->isOwner($projectId, $userId);
     }
 
     public function checkProjectMember($projectId)
     {
         $userId =  Authorizer::getResourceOwnerId();
 
-        return $this->isMember($projectId, $userId);
+        return $this->repository->hasMember($projectId, $userId);
     }
 
     public function checkProjectPermission($projectId)

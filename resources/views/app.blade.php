@@ -112,6 +112,16 @@
     <script src="{{ asset('build/js/controllers/project-files/projectFilesEdit.js') }}"></script>
     <script src="{{ asset('build/js/controllers/project-files/projectFilesRemove.js') }}"></script>
 
+    <!-- CONTROLLERS PROJECT TASK -->
+    <script src="{{ asset('build/js/controllers/project-task/projectTaskList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-task/projectTaskNew.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-task/projectTaskEdit.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-task/projectTaskRemove.js') }}"></script>
+
+    <!-- CONTROLLERS PROJECT MEMBER -->
+    <script src="{{ asset('build/js/controllers/project-member/projectMemberList.js') }}"></script>
+    <script src="{{ asset('build/js/controllers/project-member/projectMemberRemove.js') }}"></script>
+
     <!-- DIRECTIVES -->
     <script src="{{ asset('build/js/directives/projectFileDownload.js') }}"></script>
 
@@ -123,6 +133,8 @@
     <script src="{{ asset('build/js/services/client.js') }}"></script>
     <script src="{{ asset('build/js/services/projectFiles.js') }}"></script>
     <script src="{{ asset('build/js/services/projectNotes.js') }}"></script>
+    <script src="{{ asset('build/js/services/projectTask.js') }}"></script>
+    <script src="{{ asset('build/js/services/projectMember.js') }}"></script>
     <script src="{{ asset('build/js/services/user.js') }}"></script>
     <script src="{{ asset('build/js/services/project.js') }}"></script>
 

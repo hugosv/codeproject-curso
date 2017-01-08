@@ -2,7 +2,6 @@
 
 namespace CodeProject\Services;
 
-
 use CodeProject\Repositories\ProjectTaskRepository;
 use CodeProject\Validators\ProjectTaskValidator;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -13,7 +12,6 @@ use Prettus\Validator\Exceptions\ValidatorException;
  */
 class ProjectTaskService
 {
-
     /**
      * @var ProjectTaskRepository
      */
@@ -78,5 +76,11 @@ class ProjectTaskService
 
         }
 
+    }
+
+    public function delete($id)
+    {
+        $projectTask = $this->repository->skipPresenter()->find($id);
+        return $projectTask->delete();
     }
 }
