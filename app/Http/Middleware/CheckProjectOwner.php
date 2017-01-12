@@ -4,6 +4,7 @@ namespace CodeProject\Http\Middleware;
 
 use Closure;
 use CodeProject\Services\ProjectService;
+use Illuminate\Support\Facades\Response;
 
 class CheckProjectOwner
 {
@@ -33,7 +34,7 @@ class CheckProjectOwner
 
         if ($this->service->checkProjectOwner($projectId) == false)
         {
-            return ['error' => 'Access Denied!'];
+            return ['error' => 'Você não é o dono'];
         }
 
         return $next($request);

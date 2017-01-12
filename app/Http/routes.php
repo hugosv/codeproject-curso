@@ -17,7 +17,7 @@ Route::group(['middleware' => 'oauth'], function() {
     Route::resource('client', 'ClientController', ['except' => ['create', 'edit']]);
     Route::resource('project', 'ProjectController', ['except' => ['create', 'edit']]);
 
-    Route::group(['middleware' => 'check-project-owner'], function () {
+//    Route::group(['middleware' => 'check-project-permission'], function () {
         /** SubRoutes de project */
         Route::resource('project.notes', 'ProjectNoteController', ['except' => ['create', ' edit']]);
         Route::resource('project.task', 'ProjectTaskController', ['except' => ['create', 'edit']]);
@@ -32,7 +32,7 @@ Route::group(['middleware' => 'oauth'], function() {
             Route::put('{id}/file/{fileId}', 'ProjectFileController@update');
             Route::delete('{id}/file/{fileId}', 'ProjectFileController@destroy');
         });
-    });
+//    });
 
     /** Autenticação do usuário */
     Route::get('user/authenticated', 'UserController@authenticated');

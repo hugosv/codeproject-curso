@@ -54,14 +54,20 @@ app.provider('appConfig', ['$httpParamSerializerProvider', function($httpParamSe
             **/
            transformResponse: function(data, headers) {
                var headersGetter = headers();
+
                if(headersGetter['content-type'] == 'application/json' || headersGetter['content-type'] == 'text/json')
                {
                    var dataJson = JSON.parse(data);
                    if(dataJson.hasOwnProperty('data')) {
                        dataJson = dataJson.data;
                    }
+                   else if (dataJson.hasOwnProperty('error')) {
+                       return null;
+                   }
                    return dataJson;
                }
+
+
                return data;
            }
        }
