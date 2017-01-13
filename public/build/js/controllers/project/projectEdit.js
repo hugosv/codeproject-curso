@@ -5,10 +5,11 @@ angular.module('app.controllers')
 
                 Project.get({id: $routeParams.id}, function (data) {
                     $scope.project = data;
-                    // Client.get({id: data.client_id}, function (data) {
-                    //    $scope.clientSelected = data;
-                    // });
-                    $scope.clientSelected = data.client;
+
+                    Client.get({id: data.client_id}, function (data) {
+                       $scope.clientSelected = data;
+                    });
+
                 });
 
                 $scope.status = appConfig.project.status;
@@ -28,7 +29,7 @@ angular.module('app.controllers')
                     if($scope.form.$valid) {
                         $scope.project.owner_id = $cookies.getObject('user').id;
                         Project.update({id: $scope.project.id}, $scope.project, function () {
-                            $location.path('/project');
+                            $location.path('/projects');
                         });
                     }
                 };

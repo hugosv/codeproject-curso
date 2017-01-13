@@ -110,19 +110,19 @@ app.config([
                 templateUrl: 'build/views/client/list.html',
                 controller: 'ClientListController'
             })
-            .when('/clients/new', {
+            .when('/client/new', {
                 templateUrl: 'build/views/client/new.html',
                 controller: 'ClientNewController'
             })
-            .when('/clients/:id', {
+            .when('/client/:id', {
                 templateUrl: 'build/views/client/details.html',
                 controller: 'ClientDetailsController'
             })
-             .when('/clients/:id/edit', {
+             .when('/client/:id/edit', {
                 templateUrl: 'build/views/client/edit.html',
                 controller: 'ClientEditController'
             })
-            .when('/clients/:id/remove', {
+            .when('/client/:id/remove', {
                 templateUrl: 'build/views/client/remove.html',
                 controller: 'ClientRemoveController'
             })
@@ -132,19 +132,19 @@ app.config([
                 templateUrl: 'build/views/project-notes/list.html',
                 controller: 'ProjectNotesListController'
             })
-            .when('/project/:id/notes/new', {
+            .when('/project/:id/note/new', {
                 templateUrl: 'build/views/project-notes/new.html',
                 controller: 'ProjectNotesNewController'
             })
-            .when('/project/:id/notes/:idNote/show', {
+            .when('/project/:id/note/:idNote/show', {
                 templateUrl: 'build/views/project-notes/details.html',
                 controller: 'ProjectNotesDetailsController'
             })
-            .when('/project/:id/notes/:idNote/edit', {
+            .when('/project/:id/note/:idNote/edit', {
                 templateUrl: 'build/views/project-notes/edit.html',
                 controller: 'ProjectNotesEditController'
             })
-            .when('/project/:id/notes/:idNote/remove', {
+            .when('/project/:id/note/:idNote/remove', {
                 templateUrl: 'build/views/project-notes/remove.html',
                 controller: 'ProjectNotesRemoveController'
             })
@@ -154,15 +154,15 @@ app.config([
                 templateUrl: 'build/views/project-files/list.html',
                 controller: 'ProjectFilesListController'
             })
-            .when('/project/:id/files/new', {
+            .when('/project/:id/file/new', {
                 templateUrl: 'build/views/project-files/new.html',
                 controller: 'ProjectFilesNewController'
             })
-            .when('/project/:id/files/:idFile/edit', {
+            .when('/project/:id/file/:idFile/edit', {
                 templateUrl: 'build/views/project-files/edit.html',
                 controller: 'ProjectFilesEditController'
             })
-            .when('/project/:id/files/:idFile/remove', {
+            .when('/project/:id/file/:idFile/remove', {
                 templateUrl: 'build/views/project-files/remove.html',
                 controller: 'ProjectFilesRemoveController'
             })
@@ -196,7 +196,7 @@ app.config([
             })
 
             // Project
-            .when('/project/', {
+            .when('/projects', {
                 templateUrl: 'build/views/project/list.html',
                 controller: 'ProjectListController'
             })

@@ -12,10 +12,8 @@ angular.module('app.controllers')
 
                     $scope.projectFiles.$delete(
                         {
-
                             id: $scope.projectFiles.project_id,
                             idFile: $scope.projectFiles.id
-
                         }).then( function () {
                         $location.path('/project/' + $scope.projectId + '/files');
                     });

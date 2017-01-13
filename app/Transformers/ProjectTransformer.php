@@ -15,13 +15,15 @@ class ProjectTransformer extends TransformerAbstract
     {
         return [
             'id' => $project->id,
-            'project' => $project->name,
+            'client_id' => $project->client_id,
+            'name' => $project->name,
             'owner_id' => $project->owner_id,
+            'owner' => $project->owner->name,
             'description' => $project->description,
             'progress' => (int) $project->progress,
             'status' => $project->status,
             'due_date' => $project->due_date,
-            'client' => $project->client()->first()->name,
+            'client' => $project->client->name,
             'is_member' => $project->owner_id != \Authorizer::getResourceOwnerId()
         ];
     }

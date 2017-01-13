@@ -20,7 +20,7 @@ angular.module('app.controllers')
                         // Então aplica o id do usuário, senão não retorna nada.
                         $scope.project.owner_id = $cookies.getObject('user').id;
                         $scope.project.$save().then(function () {
-                            $location.path('/project');
+                            $location.path('/projects');
                         });
                     }
                 };

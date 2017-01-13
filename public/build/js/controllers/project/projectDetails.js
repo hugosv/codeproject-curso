@@ -6,6 +6,8 @@ angular.module('app.controllers')
 
             $scope.project = Project.get({id: $routeParams.id});
             // $scope.client = Client.get({id: $scope.project.client_id});
-            $scope.status = appConfig.project.status;
+            $scope.status = appConfig.project.status[0];
+
         }
+
     ]);
