@@ -16,6 +16,7 @@ Route::post('oauth/access_token', function () {
 Route::group(['middleware' => 'oauth'], function() {
     Route::resource('client', 'ClientController', ['except' => ['create', 'edit']]);
     Route::resource('project', 'ProjectController', ['except' => ['create', 'edit']]);
+    Route::get('/member/projects', 'ProjectController@indexMember');
 
     Route::group(['middleware' => 'check-project-permission'], function () {
         /** SubRoutes de project */

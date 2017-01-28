@@ -15,9 +15,12 @@ angular.module('app.services')
                         OAuthToken.removeToken();
                         $rootScope.$emit("oauth:error", {rejection: rejection, deferred: deferred});
                     }
-                    if (401 === rejection.status && rejection.data && "access_denied" === rejection.data.error || rejection.headers("www-authenticate")
-                        && 0 === rejection.headers("www-authenticate").indexOf("Bearer")) {
+                    if (401 === rejection.status && rejection.data && "access_denied" === rejection.data.error || rejection.headers("www-authenticate") && 0 === rejection.headers("www-authenticate").indexOf("Bearer")) {
                         $rootScope.$emit("oauth:error", {rejection: rejection, deferred: deferred});
+                        return deferred.promise;
+                    }
+                    if(403 === rejection.status) {
+                        $rootScope.$emit("403:forbidden", {rejection: rejection, deferred: deferred});
                         return deferred.promise;
                     }
                     return $q.reject(rejection);

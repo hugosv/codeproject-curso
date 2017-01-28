@@ -29,8 +29,8 @@ class ProjectController extends Controller
     {
         $this->repository = $repository;
         $this->service = $service;
-        $this->middleware('check-project-owner', ['except' => ['index', 'store', 'show']]);
-        $this->middleware('check-project-permission', ['except' => ['index', 'store', 'update', 'destroy']]);
+        $this->middleware('check-project-owner', ['except' => ['index', 'indexMember', 'store', 'show']]);
+        $this->middleware('check-project-permission', ['except' => ['index', 'indexMember', 'store', 'update', 'destroy']]);
 
     }
 
@@ -39,11 +39,18 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $userId = Authorizer::getResourceOwnerId();
 
-        return $this->repository->findWithOwnerAndMember($userId);
+        return $this->repository->findAsOwner($userId, $request->query->get('limit'));
+    }
+
+    public function indexMember(Request $request)
+    {
+        $userId = Authorizer::getResourceOwnerId();
+
+        return $this->repository->findAsMember($userId, $request->query->get('limit'));
     }
 
     /**

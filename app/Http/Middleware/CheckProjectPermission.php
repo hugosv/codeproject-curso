@@ -4,6 +4,7 @@ namespace CodeProject\Http\Middleware;
 
 use Closure;
 use CodeProject\Services\ProjectService;
+use Response;
 
 class CheckProjectPermission
 {
@@ -33,7 +34,7 @@ class CheckProjectPermission
 
         if ($this->service->checkProjectPermission($projectId) == false)
         {
-            return ['error' => 'You haven\'t permission to access this project'];
+            return Response::make(['error' => 'You haven\'t permission to access this project'], 403);
         }
 
         return $next($request);

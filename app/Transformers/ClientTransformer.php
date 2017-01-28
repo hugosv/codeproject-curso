@@ -8,6 +8,13 @@ use League\Fractal\TransformerAbstract;
 
 class ClientTransformer extends TransformerAbstract
 {
+
+    protected $defaultIncludes = ['projects'];
+
+    /**
+     * @param Client $client
+     * @return array
+     */
     public function transform(Client $client)
     {
         return [
@@ -20,4 +27,13 @@ class ClientTransformer extends TransformerAbstract
             'obs' => $client->obs
         ];
     }
+
+    public function includeProjects(Client $client)
+    {
+        $transformer = new ProjectTransformer();
+        $transformer->setDefaultIncludes([]);
+
+        return $this->collection($client->projects, $transformer);
+    }
+
 }

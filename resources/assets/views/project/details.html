@@ -7,7 +7,7 @@
                     <h3><b>Project: </b>{{project.name}}</h3>
                     <p><b>Description: </b>{{project.description}}</p>
                     <p><b>Due date: </b>{{project.due_date | dateBr}}</p>
-                    <p><b>Client: </b>{{project.client}}</p>
+                    <p><b>Client: </b>{{project.client.data.name}}</p>
                     <p><b>Progress: </b>{{project.progress}}%</p>
                     <p><b>Status: </b>{{project.status}}</p>
                     <p><b>Owner: </b>{{project.owner}}</p>

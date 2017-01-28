@@ -16,13 +16,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="o in project">
+                            <tr dir-paginate="o in projects | itemsPerPage: projectsPerPage"
+                                total-items="totalProjects" current-page="pagination.current">
                                 <td>{{o.name}}</td>
-                                <td>{{o.client}}</td>
+                                <td>{{o.client.data.name}}</td>
                                 <td>{{o.progress}}</td>
                                 <td>{{o.status}}</td>
-                                <td>{{o.due_date | dateBr }}</td>
+                                <td>{{o.due_date | dateBr}}</td>
                                 <td>
+                                    <a ng-href="#/project/{{o.id}}/members">Members</a> |
+                                    <a ng-href="#/project/{{o.id}}/tasks">Tasks</a> |
+                                    <a ng-href="#/project/{{o.id}}/notes">Notes</a> |
+                                    <a ng-href="#/project/{{o.id}}/files">Files</a> |
                                     <a ng-href="#/project/{{o.id}}/edit">Edit</a> |
                                     <a ng-href="#/project/{{o.id}}/remove">Delete</a> |
                                     <a ng-href="#/project/{{o.id}}">Details</a>
@@ -30,6 +35,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
                 </div>
             </div>
         </div>

@@ -2499,7 +2499,7 @@
   margin-top: 8px; }
 
 @-ms-viewport {
-  width: device-width; }
+  width: devi; }
 .visible-xs {
   display: none !important; }
 
@@ -2816,9 +2816,9 @@ h3,
       background: #030303;
       color: #FFFFFD; }
   .header-global .userinfo {
-    display: block;
-    margin: 4px;
-    padding: 0 10px;
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
     color: #D9D7D8;
     font-size: .85em; }
     .header-global .userinfo .avatar {
