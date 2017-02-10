@@ -1,5 +1,5 @@
 angular.module('app.controllers')
-    .controller('ProjectListController', ['$scope', '$routeParams', 'Project', function($scope, $routeParams, Project){
+    .controller('MemberProjectsList', ['$scope', '$routeParams', 'Project', function($scope, $routeParams, Project){
 
             $scope.projects = [];
             $scope.totalProjects = 0;
@@ -22,6 +22,5 @@ angular.module('app.controllers')
                     $scope.totalProjects = data.meta.pagination.total;
                 });
             }
-
             getResultsPage(1);
         }]);

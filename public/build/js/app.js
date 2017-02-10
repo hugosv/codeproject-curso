@@ -19,6 +19,8 @@ var app = angular.module('app', [
     'mgcrea.ngStrap.navbar',
     'ui.bootstrap.dropdown',
     'ui.bootstrap.tabs',
+    'pusher-angular',
+    'ui-notification'
 ]);
 
 angular.module('app.controllers', ['ngMessages', 'angular-oauth2']);
@@ -30,6 +32,7 @@ angular.module('app.services', ['ngResource']);
 app.provider('appConfig', ['$httpParamSerializerProvider', function($httpParamSerializerProvider) {
    var config = {
        baseUrl: 'http://codeproject.app',
+       pusherKey: '811b50a482992b44fbbc',
        project:{
            status: [
                { value: 1, label: 'Não Iniciado'},
@@ -233,7 +236,7 @@ app.config(
             // Projetos como membro
             .when('/member-projects', {
                 templateUrl: 'build/views/project/list.html',
-                controller: 'ProjectsMemberListController',
+                controller: 'MemberProjectsList',
                 title: 'Projetos - participante como membro'
             })
             .when('/member-projects/dashboard', {
@@ -290,7 +293,60 @@ app.config(
     }
 ]);
 
-app.run(['$rootScope', '$location', '$http', '$modal', 'httpBuffer', 'OAuth', function($rootScope, $location, $http, $modal, httpBuffer, OAuth) {
+app.run(['$rootScope', '$location', '$http', '$modal', '$cookies', '$filter',
+            '$pusher', 'httpBuffer', 'OAuth', 'appConfig', 'Notification',
+    function($rootScope, $location, $http, $modal, $cookies, $filter,
+             $pusher, httpBuffer, OAuth, appConfig, Notification) {
+
+    $rootScope.$on('pusher-build',function(event, data){
+        if (data.next.$$route.originalPath != '/login') {
+            if(OAuth.isAuthenticated()){
+                if(!window.client) {
+                    window.client = new Pusher(appConfig.pusherKey);
+                    var pusher = $pusher(window.client);
+                    var channel = pusher.subscribe('user.' + $cookies.getObject('user').id);
+
+                    channel.bind('CodeProject\\Events\\TaskWasIncluded',
+                        function (data) {
+
+                            var created_at = data.task.created_at;
+                            var name = data.task.name;
+                            var msg = "A tarefa '"+name+"' foi incluída em: " + $filter('dateBr')(created_at);
+
+                            Notification.success(msg);
+                        }
+                    );
+
+                    channel.bind('CodeProject\\Events\\TaskWasChanged',
+                        function (data) {
+
+                            var updated_at = data.task.updated_at;
+                            var name = data.task.name;
+                            var acao = 'alterada';
+
+                            if (data.task.status == 3) {
+                                acao = 'concluída';
+                            }
+
+                            var msg = "A tarefa '"+name+"' foi " + acao + " em: " + $filter('dateBr')(updated_at);
+
+                            Notification.success(msg);
+                        }
+                    );
+
+                }
+            }
+        }
+    });
+
+    $rootScope.$on('pusher-destroy',function(event, data){
+        if (data.next.$$route.originalPath == '/login') {
+            if (window.client) {
+                window.client.disconnect();
+                window.client = null;
+            }
+        }
+    });
 
     $rootScope.$on('$routeChangeStart', function(event,next,current){
         if(next.$$route.originalPath != '/login'){
@@ -298,6 +354,8 @@ app.run(['$rootScope', '$location', '$http', '$modal', 'httpBuffer', 'OAuth', fu
                 $location.path('login');
             }
         }
+        $rootScope.$emit('pusher-build', {next: next});
+        $rootScope.$emit('pusher-destroy', {next: next});
     });
 
     $rootScope.$on("403:forbidden", function(event,data){
